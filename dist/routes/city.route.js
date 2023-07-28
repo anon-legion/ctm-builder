@@ -5,9 +5,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const city_controller_1 = require("../controllers/city.controller");
+// import baseValidationChain from './utils/base-validation-chain';
+// import expressValidatorHandler from '../models/express-validator-handler';
 // initialize express router
 const router = express_1.default.Router();
 // prettier-ignore
 router.route('/')
-    .post(city_controller_1.postCity);
+    .post(
+// body('id').isString().isLength({ min: 2, max: 9 }).escape(),
+// body('name').isString().isLength({ min: 3, max: 50 }).escape(),
+// body('isActive').isBoolean({strict: true}),
+// expressValidatorHandler,
+city_controller_1.postCity);
 exports.default = router;

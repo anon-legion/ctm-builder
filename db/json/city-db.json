@@ -1,0 +1,14 @@
+{
+    "cities": [
+        {
+            "id": "ceb",
+            "name": "cebu city",
+            "isActive": "true"
+        },
+        {
+            "id": "mla",
+            "name": "manila city",
+            "isActive": "true"
+        }
+    ]
+}

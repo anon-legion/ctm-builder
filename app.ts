@@ -1,4 +1,4 @@
-import express, { Express, Response } from 'express';
+import express, { Response } from 'express';
 import 'express-async-errors'; // import immediately to patch express
 // import security packages
 import helmet from 'helmet';
@@ -7,8 +7,8 @@ import cors from 'cors';
 import cityRouter from './routes/city.route';
 
 // initialize express
-const app: Express = express();
-const port = process.env.PORT ?? 3001;
+const app = express();
+const port = process.env.PORT ?? 3000;
 
 // middlewares
 app.use(express.json());

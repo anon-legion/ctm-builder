@@ -22,7 +22,7 @@ const cors_1 = __importDefault(require("cors"));
 const city_route_1 = __importDefault(require("./routes/city.route"));
 // initialize express
 const app = (0, express_1.default)();
-const port = (_a = process.env.PORT) !== null && _a !== void 0 ? _a : 3001;
+const port = (_a = process.env.PORT) !== null && _a !== void 0 ? _a : 3000;
 // middlewares
 app.use(express_1.default.json());
 app.use((0, helmet_1.default)());

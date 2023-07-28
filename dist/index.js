@@ -14,11 +14,23 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+require("express-async-errors"); // import immediately to patch express
+// import security packages
+const helmet_1 = __importDefault(require("helmet"));
+const cors_1 = __importDefault(require("cors"));
+// import modules
+const city_route_1 = __importDefault(require("./routes/city.route"));
 // initialize express
 const app = (0, express_1.default)();
 const port = (_a = process.env.PORT) !== null && _a !== void 0 ? _a : 3001;
-app.get('/', (req, res) => {
-    res.send('Express + Typescript Server');
+// middlewares
+app.use(express_1.default.json());
+app.use((0, helmet_1.default)());
+app.use((0, cors_1.default)());
+// routes
+app.use('/api/v1/cities', city_route_1.default);
+app.use('/api/v1/test_endpoint', (_, res) => {
+    res.status(200).send('Express + Typescript Server');
 });
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {

@@ -1,15 +1,19 @@
 module.exports = {
+  plugins: ['import', 'node', 'security', '@typescript-eslint'],
   extends: [
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'airbnb-base',
+    'airbnb-typescript/base',
     'plugin:import/recommended',
     'plugin:node/recommended',
     'plugin:security/recommended',
     'prettier',
   ],
   parser: '@typescript-eslint/parser',
-  plugins: ['import', 'node', 'security', '@typescript-eslint'],
+  parserOptions: {
+    ecmaVersion: 2020,
+  },
   root: true,
   env: {
     es6: true,
@@ -17,9 +21,7 @@ module.exports = {
   },
   rules: {
     // severity: 0 = off, 1 = warn, 2 = error
-    // "brace-style": ["error", "stroustrup"]
-    'import/extensions': [1, 'always'],
-    'security/detect-object-injection': 0,
+    // 'security/detect-object-injection': 0,
     // turn on errors for missing imports
     'import/no-unresolved': 'error',
     'node/no-unsupported-features/es-syntax': 0,

@@ -7,8 +7,18 @@
         },
         {
             "id": "mla",
-            "name": "manila city",
+            "name": "manilerz",
+            "isActive": "false"
+        },
+        {
+            "id": "bora",
+            "name": "boracay",
             "isActive": "true"
+        },
+        {
+            "id": "bhl",
+            "name": "bohol",
+            "isActive": "false"
         }
     ]
 }

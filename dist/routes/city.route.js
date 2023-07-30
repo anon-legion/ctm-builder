@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+// import { body } from 'express-validator';
 const city_controller_1 = require("../controllers/city.controller");
 // import baseValidationChain from './utils/base-validation-chain';
 // import expressValidatorHandler from '../models/express-validator-handler';
@@ -16,5 +17,10 @@ router.route('/')
 // body('name').isString().isLength({ min: 3, max: 50 }).escape(),
 // body('isActive').isBoolean({strict: true}),
 // expressValidatorHandler,
-city_controller_1.postCity);
+city_controller_1.postCity)
+    .get(city_controller_1.getCitiesAll);
+// prettier-ignore
+router.route('/:id')
+    .get(city_controller_1.getCityById)
+    .put(city_controller_1.putCityById);
 exports.default = router;

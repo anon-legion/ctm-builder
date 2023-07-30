@@ -1,6 +1,7 @@
 import express from 'express';
-import { body } from 'express-validator';
-import { postCity } from '../controllers/city.controller';
+// import { body } from 'express-validator';
+import { postCity, getCitiesAll, getCityById, putCityById } from '../controllers/city.controller';
+import { get } from 'http';
 // import baseValidationChain from './utils/base-validation-chain';
 // import expressValidatorHandler from '../models/express-validator-handler';
 
@@ -15,6 +16,14 @@ router.route('/')
     // body('isActive').isBoolean({strict: true}),
     // expressValidatorHandler,
     postCity,
-  );
+  )
+  .get(
+    getCitiesAll,
+  )
+
+// prettier-ignore
+router.route('/:id')
+  .get(getCityById)
+  .put(putCityById)
 
 export default router;

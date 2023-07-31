@@ -22,6 +22,7 @@ const cors_1 = __importDefault(require("cors"));
 const city_route_1 = __importDefault(require("./routes/city.route"));
 const bus_route_route_1 = __importDefault(require("./routes/bus-route.route"));
 const place_route_1 = __importDefault(require("./routes/place.route"));
+const route_stop_route_1 = __importDefault(require("./routes/route-stop.route"));
 // initialize express
 const app = (0, express_1.default)();
 const port = (_a = process.env.PORT) !== null && _a !== void 0 ? _a : 3000;
@@ -33,6 +34,7 @@ app.use((0, cors_1.default)());
 app.use('/api/v1/cities', city_route_1.default);
 app.use('/api/v1/bus-routes', bus_route_route_1.default);
 app.use('/api/v1/places', place_route_1.default);
+app.use('/api/v1/route-stops', route_stop_route_1.default);
 app.use('/api/v1/test_endpoint', (_, res) => {
     res.status(200).send('Express + Typescript Server');
 });

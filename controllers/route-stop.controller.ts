@@ -29,4 +29,4 @@ async function postRouteStop(req: Request<{}, {}, RouteStop>, res: Response) {
   }
 }
 
-export default { getRouteStopsAll, postRouteStop };
+export { getRouteStopsAll, postRouteStop };

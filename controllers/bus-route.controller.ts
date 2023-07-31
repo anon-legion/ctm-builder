@@ -13,11 +13,13 @@ async function getBusRoutesAll(_: Request, res: Response) {
 }
 
 async function postBusRoute(req: Request<{}, {}, Route>, res: Response) {
-  const { id, name, isActive } = req.body;
+  const { id, cityId, name, isActive } = req.body;
   console.log(`isActive: ${isActive}\n ${typeof isActive}`);
   try {
-    await busRouteDb.push(`/bus-routes[]`, { id, name, isActive: isActive === false ? false : true });
-    res.status(StatusCodes.CREATED).send(`postBusRoute: ${id}, ${name}, ${isActive === false ? false : true}`);
+    await busRouteDb.push(`/bus-routes[]`, { id, cityId, name, isActive: isActive === false ? false : true });
+    res
+      .status(StatusCodes.CREATED)
+      .send(`postBusRoute: ${id}, ${cityId}, ${name}, ${isActive === false ? false : true}`);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }
@@ -41,7 +43,7 @@ async function getBusRouteById(req: Request, res: Response) {
 async function putBusRouteById(req: Request, res: Response) {
   try {
     const { id } = req.params;
-    const { name, isActive } = req.body;
+    const { cityId, name, isActive } = req.body;
     const index = await busRouteDb.getIndex(`/bus-routes`, id);
     if (index === -1) {
       res.status(StatusCodes.NOT_FOUND).send(`Bus Route with id "${id}" not found`);
@@ -49,6 +51,7 @@ async function putBusRouteById(req: Request, res: Response) {
     }
     await busRouteDb.push(`/bus-routes[${index}]`, {
       id,
+      cityId,
       name,
       isActive: isActive === false ? false : true,
     });

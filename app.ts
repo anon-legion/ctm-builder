@@ -7,6 +7,7 @@ import cors from 'cors';
 import cityRouter from './routes/city.route';
 import busRouteRouter from './routes/bus-route.route';
 import placeRouter from './routes/place.route';
+import routeStopRouter from './routes/route-stop.route';
 
 // initialize express
 const app = express();
@@ -21,6 +22,7 @@ app.use(cors());
 app.use('/api/v1/cities', cityRouter);
 app.use('/api/v1/bus-routes', busRouteRouter);
 app.use('/api/v1/places', placeRouter);
+app.use('/api/v1/route-stops', routeStopRouter);
 app.use('/api/v1/test_endpoint', (_, res: Response) => {
   res.status(200).send('Express + Typescript Server');
 });

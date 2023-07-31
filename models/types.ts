@@ -20,6 +20,7 @@ export interface Place {
 }
 
 export interface RouteStop {
+  id: string;
   routeId: Route['id'];
   placeId: Place['id'];
   distance: number;

@@ -12,6 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.postRouteStop = exports.getRouteStopsAll = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const route_stop_db_1 = __importDefault(require("../db/route-stop/route-stop-db"));
 function getRouteStopsAll(_, res) {
@@ -25,6 +26,7 @@ function getRouteStopsAll(_, res) {
         }
     });
 }
+exports.getRouteStopsAll = getRouteStopsAll;
 function postRouteStop(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { routeId, placeId, distance, isActive } = req.body;
@@ -44,4 +46,4 @@ function postRouteStop(req, res) {
         }
     });
 }
-exports.default = { getRouteStopsAll, postRouteStop };
+exports.postRouteStop = postRouteStop;

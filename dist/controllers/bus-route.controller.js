@@ -29,11 +29,13 @@ function getBusRoutesAll(_, res) {
 exports.getBusRoutesAll = getBusRoutesAll;
 function postBusRoute(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { id, name, isActive } = req.body;
+        const { id, cityId, name, isActive } = req.body;
         console.log(`isActive: ${isActive}\n ${typeof isActive}`);
         try {
-            yield bus_route_db_1.default.push(`/bus-routes[]`, { id, name, isActive: isActive === false ? false : true });
-            res.status(http_status_codes_1.StatusCodes.CREATED).send(`postBusRoute: ${id}, ${name}, ${isActive === false ? false : true}`);
+            yield bus_route_db_1.default.push(`/bus-routes[]`, { id, cityId, name, isActive: isActive === false ? false : true });
+            res
+                .status(http_status_codes_1.StatusCodes.CREATED)
+                .send(`postBusRoute: ${id}, ${cityId}, ${name}, ${isActive === false ? false : true}`);
         }
         catch (err) {
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
@@ -63,7 +65,7 @@ function putBusRouteById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const { id } = req.params;
-            const { name, isActive } = req.body;
+            const { cityId, name, isActive } = req.body;
             const index = yield bus_route_db_1.default.getIndex(`/bus-routes`, id);
             if (index === -1) {
                 res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send(`Bus Route with id "${id}" not found`);
@@ -71,6 +73,7 @@ function putBusRouteById(req, res) {
             }
             yield bus_route_db_1.default.push(`/bus-routes[${index}]`, {
                 id,
+                cityId,
                 name,
                 isActive: isActive === false ? false : true,
             });

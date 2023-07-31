@@ -8,6 +8,8 @@ import cityRouter from './routes/city.route';
 import busRouteRouter from './routes/bus-route.route';
 import placeRouter from './routes/place.route';
 import routeStopRouter from './routes/route-stop.route';
+import notFoundMiddlware from './middleware/not-found';
+import errorHandlerMiddleware from './middleware/error-handler';
 
 // initialize express
 const app = express();
@@ -26,6 +28,10 @@ app.use('/api/v1/route-stops', routeStopRouter);
 app.use('/api/v1/test_endpoint', (_, res: Response) => {
   res.status(200).send('Express + Typescript Server');
 });
+
+// 404 and error handler middleware to catch request errors
+app.use(notFoundMiddlware);
+app.use(errorHandlerMiddleware);
 
 const start = async () => {
   try {

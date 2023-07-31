@@ -23,6 +23,8 @@ const city_route_1 = __importDefault(require("./routes/city.route"));
 const bus_route_route_1 = __importDefault(require("./routes/bus-route.route"));
 const place_route_1 = __importDefault(require("./routes/place.route"));
 const route_stop_route_1 = __importDefault(require("./routes/route-stop.route"));
+const not_found_1 = __importDefault(require("./middleware/not-found"));
+const error_handler_1 = __importDefault(require("./middleware/error-handler"));
 // initialize express
 const app = (0, express_1.default)();
 const port = (_a = process.env.PORT) !== null && _a !== void 0 ? _a : 3000;
@@ -38,6 +40,9 @@ app.use('/api/v1/route-stops', route_stop_route_1.default);
 app.use('/api/v1/test_endpoint', (_, res) => {
     res.status(200).send('Express + Typescript Server');
 });
+// 404 and error handler middleware to catch request errors
+app.use(not_found_1.default);
+app.use(error_handler_1.default);
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         app.listen(port, () => {

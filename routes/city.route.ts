@@ -1,7 +1,7 @@
 import express from 'express';
 import { postCity, getCitiesAll, getCityById, putCityById } from '../controllers/city.controller';
 // import baseValidationChain from './utils/base-validation-chain';
-// import expressValidatorHandler from '../models/express-validator-handler';
+// import expressValidatorHandler from '../middleware/express-validator-handler';
 
 // initialize express router
 const router = express.Router();

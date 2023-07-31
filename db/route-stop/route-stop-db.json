@@ -1,3 +1,11 @@
 {
-  "route-stops": []
+    "route-stops": [
+        {
+            "id": "ceb-13c-2",
+            "routeId": "ceb-13c",
+            "placeId": 2,
+            "distance": 7.2,
+            "isActive": false
+        }
+    ]
 }

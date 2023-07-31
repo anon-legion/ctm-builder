@@ -11,4 +11,8 @@ const router = express_1.default.Router();
 router.route('/')
     .post(route_stop_controller_1.postRouteStop)
     .get(route_stop_controller_1.getRouteStopsAll);
+// prettier-ignore
+router.route('/:id')
+    .get(route_stop_controller_1.getRouteStopById)
+    .put(route_stop_controller_1.putRouteStopById);
 exports.default = router;

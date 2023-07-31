@@ -1,5 +1,10 @@
 import express from 'express';
-import { getRouteStopsAll, postRouteStop } from '../controllers/route-stop.controller';
+import {
+  getRouteStopsAll,
+  postRouteStop,
+  getRouteStopById,
+  putRouteStopById,
+} from '../controllers/route-stop.controller';
 
 // initialize express router
 const router = express.Router();
@@ -8,5 +13,10 @@ const router = express.Router();
 router.route('/')
   .post(postRouteStop)
   .get(getRouteStopsAll)
+
+// prettier-ignore
+router.route('/:id')
+  .get(getRouteStopById)
+  .put(putRouteStopById);
 
 export default router;

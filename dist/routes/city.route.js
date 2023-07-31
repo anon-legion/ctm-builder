@@ -6,7 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const city_controller_1 = require("../controllers/city.controller");
 // import baseValidationChain from './utils/base-validation-chain';
-// import expressValidatorHandler from '../models/express-validator-handler';
+// import expressValidatorHandler from '../middleware/express-validator-handler';
 // initialize express router
 const router = express_1.default.Router();
 // prettier-ignore

@@ -12,13 +12,13 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.postRouteStop = exports.getRouteStopsAll = void 0;
+exports.putRouteStopById = exports.getRouteStopById = exports.postRouteStop = exports.getRouteStopsAll = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const route_stop_db_1 = __importDefault(require("../db/route-stop/route-stop-db"));
 function getRouteStopsAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const routeStopData = (yield route_stop_db_1.default.getData('/routeStops'));
+            const routeStopData = (yield route_stop_db_1.default.getData('/route-stops'));
             res.status(http_status_codes_1.StatusCodes.OK).send({ routeStopData });
         }
         catch (err) {
@@ -32,7 +32,7 @@ function postRouteStop(req, res) {
         const { routeId, placeId, distance, isActive } = req.body;
         const id = `${routeId}-${placeId}`;
         try {
-            yield route_stop_db_1.default.push(`/routeStops[]`, {
+            yield route_stop_db_1.default.push(`/route-stops[]`, {
                 id,
                 routeId,
                 placeId,
@@ -47,3 +47,47 @@ function postRouteStop(req, res) {
     });
 }
 exports.postRouteStop = postRouteStop;
+function getRouteStopById(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { id } = req.params;
+            const index = yield route_stop_db_1.default.getIndex(`/route-stops`, id);
+            if (index === -1) {
+                res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send(`Route Stop with id "${id}" not found`);
+                return;
+            }
+            const routeStopData = (yield route_stop_db_1.default.getData(`/route-stops[${index}]`));
+            res.status(http_status_codes_1.StatusCodes.OK).send({ routeStopData });
+        }
+        catch (err) {
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    });
+}
+exports.getRouteStopById = getRouteStopById;
+function putRouteStopById(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        try {
+            const { id } = req.params;
+            const { routeId, placeId, distance, isActive } = req.body;
+            const index = yield route_stop_db_1.default.getIndex(`/route-stops`, id);
+            if (index === -1) {
+                res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send(`Route Stop with id "${id}" not found`);
+                return;
+            }
+            yield route_stop_db_1.default.push(`/route-stops[${index}]`, {
+                id,
+                routeId,
+                placeId,
+                distance,
+                isActive: isActive === false ? false : true,
+            });
+            const updatedRouteStopData = yield route_stop_db_1.default.getData(`/route-stops[${index}]`);
+            res.status(http_status_codes_1.StatusCodes.OK).send({ updatedRouteStopData });
+        }
+        catch (err) {
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    });
+}
+exports.putRouteStopById = putRouteStopById;

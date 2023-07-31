@@ -1,0 +1,24 @@
+{
+  "cities": [
+    {
+      "id": "ceb",
+      "name": "cebu city",
+      "isActive": true
+    },
+    {
+      "id": "mla",
+      "name": "manilerz",
+      "isActive": false
+    },
+    {
+      "id": "bora",
+      "name": "boracay",
+      "isActive": true
+    },
+    {
+      "id": "bhl",
+      "name": "boholerz",
+      "isActive": true
+    }
+  ]
+}

@@ -1,7 +1,5 @@
 import express from 'express';
-// import { body } from 'express-validator';
 import { postCity, getCitiesAll, getCityById, putCityById } from '../controllers/city.controller';
-import { get } from 'http';
 // import baseValidationChain from './utils/base-validation-chain';
 // import expressValidatorHandler from '../models/express-validator-handler';
 

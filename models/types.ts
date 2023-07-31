@@ -15,11 +15,11 @@ export interface Place {
   id: number;
   cityId: City['id'];
   name: string;
-  alias: string[]; // violates 1NF
+  aliases: string[]; // violates 1NF
   isActive?: boolean;
 }
 
-export interface RouteStops {
+export interface RouteStop {
   routeId: Route['id'];
   placeId: Place['id'];
   distance: number;

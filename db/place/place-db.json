@@ -1,0 +1,24 @@
+{
+    "places": [
+        {
+            "id": 1,
+            "cityId": "ceb",
+            "name": "university of san carlos talamban",
+            "aliases": [
+                "usc",
+                "usc-tc"
+            ],
+            "isActive": true
+        },
+        {
+            "id": 2,
+            "cityId": "ceb",
+            "name": "ayala center cebu",
+            "aliases": [
+                "ayala",
+                "ayala mall"
+            ],
+            "isActive": false
+        }
+    ]
+}

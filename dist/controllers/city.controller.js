@@ -19,7 +19,7 @@ function getCitiesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const cityData = (yield city_db_1.default.getData('/cities'));
-            res.status(http_status_codes_1.StatusCodes.OK).send({ cityData });
+            res.status(http_status_codes_1.StatusCodes.OK).send([...cityData]);
         }
         catch (err) {
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
@@ -31,8 +31,21 @@ function postCity(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id, name, isActive } = req.body;
         try {
+            const duplicates = { id: '', name: '' };
+            const cityData = (yield city_db_1.default.getData('/cities'));
+            const cityExists = cityData.some((city) => {
+                if (city.id === id)
+                    duplicates.id = id;
+                if (city.name === name)
+                    duplicates.name = name;
+                return city.id === id || city.name === name;
+            });
+            if (cityExists) {
+                res.status(http_status_codes_1.StatusCodes.CONFLICT).send(duplicates);
+                return;
+            }
             yield city_db_1.default.push(`/cities[]`, { id, name, isActive: isActive === false ? false : true });
-            res.status(http_status_codes_1.StatusCodes.CREATED).send(`postCity: ${id}, ${name}, ${isActive === false ? false : true}`);
+            res.status(http_status_codes_1.StatusCodes.CREATED).send({ id, name, isActive: isActive === false ? false : true });
         }
         catch (err) {
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);

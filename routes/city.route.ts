@@ -1,7 +1,9 @@
 import express from 'express';
+import { body } from 'express-validator';
 import { postCity, getCitiesAll, getCityById, putCityById } from '../controllers/city.controller';
-// import baseValidationChain from './utils/base-validation-chain';
-// import expressValidatorHandler from '../middleware/express-validator-handler';
+import baseValidationChain from './utils/base-validation-chain';
+import normalizeCityPayload from './utils/normalize-city-payload';
+import expressValidatorHandler from '../middleware/express-validator-handler';
 
 // initialize express router
 const router = express.Router();
@@ -9,10 +11,11 @@ const router = express.Router();
 // prettier-ignore
 router.route('/')
   .post(
-    // body('id').isString().isLength({ min: 2, max: 9 }).escape(),
-    // body('name').isString().isLength({ min: 3, max: 50 }).escape(),
-    // body('isActive').isBoolean({strict: true}),
-    // expressValidatorHandler,
+    baseValidationChain('id').isString().isLength({ min: 3, max: 5 }).escape(),
+    baseValidationChain('name').isString().isLength({ min: 4, max: 50 }).escape(),
+    body('isActive').isBoolean({strict: true}),
+    normalizeCityPayload(),
+    expressValidatorHandler,
     postCity,
   )
   .get(

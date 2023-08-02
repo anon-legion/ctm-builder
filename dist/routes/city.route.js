@@ -4,19 +4,16 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
+const express_validator_1 = require("express-validator");
 const city_controller_1 = require("../controllers/city.controller");
-// import baseValidationChain from './utils/base-validation-chain';
-// import expressValidatorHandler from '../middleware/express-validator-handler';
+const base_validation_chain_1 = __importDefault(require("./utils/base-validation-chain"));
+const normalize_city_payload_1 = __importDefault(require("./utils/normalize-city-payload"));
+const express_validator_handler_1 = __importDefault(require("../middleware/express-validator-handler"));
 // initialize express router
 const router = express_1.default.Router();
 // prettier-ignore
 router.route('/')
-    .post(
-// body('id').isString().isLength({ min: 2, max: 9 }).escape(),
-// body('name').isString().isLength({ min: 3, max: 50 }).escape(),
-// body('isActive').isBoolean({strict: true}),
-// expressValidatorHandler,
-city_controller_1.postCity)
+    .post((0, base_validation_chain_1.default)('id').isString().isLength({ min: 3, max: 5 }).escape(), (0, base_validation_chain_1.default)('name').isString().isLength({ min: 4, max: 50 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, normalize_city_payload_1.default)(), express_validator_handler_1.default, city_controller_1.postCity)
     .get(city_controller_1.getCitiesAll);
 // prettier-ignore
 router.route('/:id')

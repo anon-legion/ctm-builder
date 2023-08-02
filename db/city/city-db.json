@@ -2,22 +2,27 @@
   "cities": [
     {
       "id": "ceb",
-      "name": "cebu city",
+      "name": "Cebu City",
       "isActive": true
     },
     {
       "id": "mla",
-      "name": "manilerz",
+      "name": "Manila City",
       "isActive": false
     },
     {
-      "id": "bora",
-      "name": "boracay",
+      "id": "dvo",
+      "name": "Davao City",
       "isActive": true
     },
     {
-      "id": "bhl",
-      "name": "boholerz",
+      "id": "rxs",
+      "name": "Roxas",
+      "isActive": true
+    },
+    {
+      "id": "lcn",
+      "name": "Lucena City",
       "isActive": true
     }
   ]

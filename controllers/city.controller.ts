@@ -6,7 +6,7 @@ import { City } from '../models/types';
 async function getCitiesAll(_: Request, res: Response) {
   try {
     const cityData = (await cityDb.getData('/cities')) as City[];
-    res.status(StatusCodes.OK).send({ cityData });
+    res.status(StatusCodes.OK).send([...cityData]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }
@@ -15,8 +15,19 @@ async function getCitiesAll(_: Request, res: Response) {
 async function postCity(req: Request<{}, {}, City>, res: Response) {
   const { id, name, isActive } = req.body;
   try {
+    const duplicates: City = { id: '', name: '' };
+    const cityData = (await cityDb.getData('/cities')) as City[];
+    const cityExists = cityData.some((city) => {
+      if (city.id === id) duplicates.id = id;
+      if (city.name === name) duplicates.name = name;
+      return city.id === id || city.name === name;
+    });
+    if (cityExists) {
+      res.status(StatusCodes.CONFLICT).send(duplicates);
+      return;
+    }
     await cityDb.push(`/cities[]`, { id, name, isActive: isActive === false ? false : true });
-    res.status(StatusCodes.CREATED).send(`postCity: ${id}, ${name}, ${isActive === false ? false : true}`);
+    res.status(StatusCodes.CREATED).send({ id, name, isActive: isActive === false ? false : true });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }

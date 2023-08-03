@@ -6,6 +6,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const express_validator_1 = require("express-validator");
 const city_controller_1 = require("../controllers/city.controller");
+const bus_route_controller_1 = require("../controllers/bus-route.controller");
 const base_validation_chain_1 = __importDefault(require("./utils/base-validation-chain"));
 const normalize_city_payload_1 = __importDefault(require("./utils/normalize-city-payload"));
 const express_validator_handler_1 = __importDefault(require("../middleware/express-validator-handler"));
@@ -19,4 +20,7 @@ router.route('/')
 router.route('/:id')
     .get(city_controller_1.getCityById)
     .put(city_controller_1.putCityById);
+// prettier-ignore
+router.route('/:id/bus-routes')
+    .get(bus_route_controller_1.getBusRouteByCityId);
 exports.default = router;

@@ -63,7 +63,7 @@ function getCityById(req, res) {
                 return;
             }
             const cityData = (yield city_db_1.default.getData(`/cities[${index}]`));
-            res.status(http_status_codes_1.StatusCodes.OK).send({ cityData });
+            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, cityData));
         }
         catch (err) {
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);

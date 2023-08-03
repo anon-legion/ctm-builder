@@ -42,7 +42,7 @@ async function getCityById(req: Request, res: Response) {
       return;
     }
     const cityData = (await cityDb.getData(`/cities[${index}]`)) as City;
-    res.status(StatusCodes.OK).send({ cityData });
+    res.status(StatusCodes.OK).send({ ...cityData });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }

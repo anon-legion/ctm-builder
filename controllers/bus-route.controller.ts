@@ -26,15 +26,31 @@ async function postBusRoute(req: Request<{}, {}, Route>, res: Response) {
 }
 
 async function getBusRouteById(req: Request, res: Response) {
+  const { id } = req.params;
   try {
-    const { id } = req.params;
-    const index = await busRouteDb.getIndex(`/bus-routes`, id);
+    const index = await busRouteDb.getIndex('/bus-routes', id);
     if (index === -1) {
-      res.status(StatusCodes.NOT_FOUND).send(`Bus Route with id "${id}" not found`);
+      res.status(StatusCodes.NOT_FOUND).send(`Bus route with id "${id}" not found`);
       return;
     }
     const busRouteData = (await busRouteDb.getData(`/bus-routes[${index}]`)) as Route;
     res.status(StatusCodes.OK).send({ busRouteData });
+  } catch (err) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+}
+
+async function getBusRouteByCityId(req: Request, res: Response) {
+  const { id: cityId } = req.params;
+  try {
+    const index = await busRouteDb.getIndex('/bus-routes', cityId, 'cityId');
+    if (index === -1) {
+      res.status(StatusCodes.NOT_FOUND).send(`Bus routes from ctiy "${cityId}" not found`);
+      return;
+    }
+    const busRouteData = (await busRouteDb.getData('/bus-routes')) as Route[];
+    const cityBusRoutes = busRouteData.filter((busRoute: Route) => busRoute.cityId === cityId);
+    res.status(StatusCodes.OK).send(cityBusRoutes);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }
@@ -62,4 +78,4 @@ async function putBusRouteById(req: Request, res: Response) {
   }
 }
 
-export { getBusRoutesAll, postBusRoute, getBusRouteById, putBusRouteById };
+export { getBusRoutesAll, postBusRoute, getBusRouteById, getBusRouteByCityId, putBusRouteById };

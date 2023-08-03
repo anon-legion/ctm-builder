@@ -1,6 +1,7 @@
 import express from 'express';
 import { body } from 'express-validator';
 import { postCity, getCitiesAll, getCityById, putCityById } from '../controllers/city.controller';
+import { getBusRouteByCityId } from '../controllers/bus-route.controller';
 import baseValidationChain from './utils/base-validation-chain';
 import normalizeCityPayload from './utils/normalize-city-payload';
 import expressValidatorHandler from '../middleware/express-validator-handler';
@@ -26,5 +27,9 @@ router.route('/')
 router.route('/:id')
   .get(getCityById)
   .put(putCityById)
+
+// prettier-ignore
+router.route('/:id/bus-routes')
+    .get(getBusRouteByCityId)
 
 export default router;

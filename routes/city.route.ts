@@ -12,7 +12,6 @@ const router = express.Router();
 // prettier-ignore
 router.route('/')
   .post(
-    baseValidationChain('id').isString().isLength({ min: 3, max: 5 }).escape(),
     baseValidationChain('name').isString().isLength({ min: 4, max: 50 }).escape(),
     body('isActive').isBoolean({strict: true}),
     normalizeCityPayload(),

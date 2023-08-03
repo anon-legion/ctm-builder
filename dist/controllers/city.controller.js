@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.putCityById = exports.getCityById = exports.postCity = exports.getCitiesAll = void 0;
 const http_status_codes_1 = require("http-status-codes");
+const City_1 = __importDefault(require("../models/City"));
 const city_db_1 = __importDefault(require("../db/city/city-db"));
 function getCitiesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -29,26 +30,18 @@ function getCitiesAll(_, res) {
 exports.getCitiesAll = getCitiesAll;
 function postCity(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { id, name, isActive } = req.body;
+        const { name, isActive } = req.body;
         try {
-            const duplicates = { id: '', name: '' };
-            const cityData = (yield city_db_1.default.getData('/cities'));
-            const cityExists = cityData.some((city) => {
-                if (city.id === id)
-                    duplicates.id = id;
-                if (city.name === name)
-                    duplicates.name = name;
-                return city.id === id || city.name === name;
-            });
-            if (cityExists) {
-                res.status(http_status_codes_1.StatusCodes.CONFLICT).send(duplicates);
-                return;
-            }
-            yield city_db_1.default.push(`/cities[]`, { id, name, isActive: isActive === false ? false : true });
-            res.status(http_status_codes_1.StatusCodes.CREATED).send({ id, name, isActive: isActive === false ? false : true });
+            const newCity = yield City_1.default.create({ name, isActive: isActive === false ? false : true });
+            res.status(http_status_codes_1.StatusCodes.CREATED).send({ name, isActive: isActive === false ? false : true });
         }
         catch (err) {
-            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+            if (err.code === 11000) {
+                res.status(http_status_codes_1.StatusCodes.CONFLICT).send('Resource already exists');
+            }
+            else {
+                res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send('Internal server error');
+            }
         }
     });
 }

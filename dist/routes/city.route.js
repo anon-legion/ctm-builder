@@ -14,7 +14,7 @@ const express_validator_handler_1 = __importDefault(require("../middleware/expre
 const router = express_1.default.Router();
 // prettier-ignore
 router.route('/')
-    .post((0, base_validation_chain_1.default)('id').isString().isLength({ min: 3, max: 5 }).escape(), (0, base_validation_chain_1.default)('name').isString().isLength({ min: 4, max: 50 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, normalize_city_payload_1.default)(), express_validator_handler_1.default, city_controller_1.postCity)
+    .post((0, base_validation_chain_1.default)('name').isString().isLength({ min: 4, max: 50 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, normalize_city_payload_1.default)(), express_validator_handler_1.default, city_controller_1.postCity)
     .get(city_controller_1.getCitiesAll);
 // prettier-ignore
 router.route('/:id')

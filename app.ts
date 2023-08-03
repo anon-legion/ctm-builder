@@ -37,7 +37,7 @@ app.use(errorHandlerMiddleware);
 const start = async () => {
   try {
     // establish connection to MongoDB and start server
-    await mongoose.connect(process.env.MONGO_URI!);
+    await mongoose.connect(process.env.MONGO_URI!, { dbName: 'ctm' });
     app.listen(port, () => {
       // eslint-disable-next-line no-console
       console.log(`Server listening on port [${port}]`);

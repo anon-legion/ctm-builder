@@ -7,10 +7,7 @@ const toTitleCase = (text: string) => {
 
 const normalizeCityPayload = () => {
   return body().custom((obj: City) => {
-    console.log(obj);
-    obj.id = obj.id.toLowerCase();
     obj.name = toTitleCase(obj.name);
-    console.log(obj);
     return obj;
   });
 };

@@ -6,10 +6,7 @@ const toTitleCase = (text) => {
 };
 const normalizeCityPayload = () => {
     return (0, express_validator_1.body)().custom((obj) => {
-        console.log(obj);
-        obj.id = obj.id.toLowerCase();
         obj.name = toTitleCase(obj.name);
-        console.log(obj);
         return obj;
     });
 };

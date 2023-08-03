@@ -1,4 +1,5 @@
 import { Request, Response } from 'express';
+import mongoose from 'mongoose';
 import { StatusCodes } from 'http-status-codes';
 import City from '../models/City';
 import cityDb from '../db/city/city-db';
@@ -14,23 +15,16 @@ async function getCitiesAll(_: Request, res: Response) {
 }
 
 async function postCity(req: Request<{}, {}, CityType>, res: Response) {
-  const { id, name, isActive } = req.body;
+  const { name, isActive } = req.body;
   try {
-    const duplicates: CityType = { id: '', name: '' };
-    const cityData = (await cityDb.getData('/cities')) as CityType[];
-    const cityExists = cityData.some((city) => {
-      if (city.id === id) duplicates.id = id;
-      if (city.name === name) duplicates.name = name;
-      return city.id === id || city.name === name;
-    });
-    if (cityExists) {
-      res.status(StatusCodes.CONFLICT).send(duplicates);
-      return;
+    const newCity = await City.create({ name, isActive: isActive === false ? false : true });
+    res.status(StatusCodes.CREATED).send({ name, isActive: isActive === false ? false : true });
+  } catch (err: any) {
+    if (err.code === 11000) {
+      res.status(StatusCodes.CONFLICT).send('Resource already exists');
+    } else {
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal server error');
     }
-    await cityDb.push(`/cities[]`, { id, name, isActive: isActive === false ? false : true });
-    res.status(StatusCodes.CREATED).send({ id, name, isActive: isActive === false ? false : true });
-  } catch (err) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
 

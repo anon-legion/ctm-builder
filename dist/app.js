@@ -47,7 +47,7 @@ app.use(error_handler_1.default);
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
         // establish connection to MongoDB and start server
-        yield mongoose_1.default.connect(process.env.MONGO_URI);
+        yield mongoose_1.default.connect(process.env.MONGO_URI, { dbName: 'ctm' });
         app.listen(port, () => {
             // eslint-disable-next-line no-console
             console.log(`Server listening on port [${port}]`);

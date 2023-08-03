@@ -1,22 +1,23 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import City from '../models/City';
 import cityDb from '../db/city/city-db';
-import { City } from '../models/types';
+import { City as CityType } from '../models/types';
 
 async function getCitiesAll(_: Request, res: Response) {
   try {
-    const cityData = (await cityDb.getData('/cities')) as City[];
+    const cityData = (await cityDb.getData('/cities')) as CityType[];
     res.status(StatusCodes.OK).send([...cityData]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
 
-async function postCity(req: Request<{}, {}, City>, res: Response) {
+async function postCity(req: Request<{}, {}, CityType>, res: Response) {
   const { id, name, isActive } = req.body;
   try {
-    const duplicates: City = { id: '', name: '' };
-    const cityData = (await cityDb.getData('/cities')) as City[];
+    const duplicates: CityType = { id: '', name: '' };
+    const cityData = (await cityDb.getData('/cities')) as CityType[];
     const cityExists = cityData.some((city) => {
       if (city.id === id) duplicates.id = id;
       if (city.name === name) duplicates.name = name;
@@ -41,7 +42,7 @@ async function getCityById(req: Request, res: Response) {
       res.status(StatusCodes.NOT_FOUND).send(`City with id "${id}" not found`);
       return;
     }
-    const cityData = (await cityDb.getData(`/cities[${index}]`)) as City;
+    const cityData = (await cityDb.getData(`/cities[${index}]`)) as CityType;
     res.status(StatusCodes.OK).send({ ...cityData });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);

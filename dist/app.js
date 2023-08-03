@@ -19,6 +19,7 @@ require("express-async-errors"); // import immediately to patch express
 const helmet_1 = __importDefault(require("helmet"));
 const cors_1 = __importDefault(require("cors"));
 // import modules
+const mongoose_1 = __importDefault(require("mongoose"));
 const city_route_1 = __importDefault(require("./routes/city.route"));
 const bus_route_route_1 = __importDefault(require("./routes/bus-route.route"));
 const place_route_1 = __importDefault(require("./routes/place.route"));
@@ -45,6 +46,8 @@ app.use(not_found_1.default);
 app.use(error_handler_1.default);
 const start = () => __awaiter(void 0, void 0, void 0, function* () {
     try {
+        // establish connection to MongoDB and start server
+        yield mongoose_1.default.connect(process.env.MONGO_URI);
         app.listen(port, () => {
             // eslint-disable-next-line no-console
             console.log(`Server listening on port [${port}]`);

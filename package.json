@@ -23,6 +23,7 @@
     "express-validator": "^7.0.1",
     "helmet": "^7.0.0",
     "http-status-codes": "^2.2.0",
+    "mongoose": "^7.4.1",
     "node-json-db": "^2.2.0"
   },
   "devDependencies": {

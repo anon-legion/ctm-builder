@@ -4,6 +4,7 @@ import 'express-async-errors'; // import immediately to patch express
 import helmet from 'helmet';
 import cors from 'cors';
 // import modules
+import mongoose from 'mongoose';
 import cityRouter from './routes/city.route';
 import busRouteRouter from './routes/bus-route.route';
 import placeRouter from './routes/place.route';
@@ -35,6 +36,8 @@ app.use(errorHandlerMiddleware);
 
 const start = async () => {
   try {
+    // establish connection to MongoDB and start server
+    await mongoose.connect(process.env.MONGO_URI!);
     app.listen(port, () => {
       // eslint-disable-next-line no-console
       console.log(`Server listening on port [${port}]`);

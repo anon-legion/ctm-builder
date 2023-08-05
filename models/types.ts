@@ -1,3 +1,15 @@
+import { Types } from 'mongoose';
+
+export interface ICity {
+  _id: Types.ObjectId;
+  name: string;
+  isActive: boolean;
+}
+
+export interface IRoute extends ICity {
+  cityId: Types.ObjectId;
+}
+
 export interface City {
   id: string;
   name: string;

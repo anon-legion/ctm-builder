@@ -1,6 +1,7 @@
-import mongoose from 'mongoose';
+import { Schema, model, Document, Error as MongooseError } from 'mongoose';
+import { ICity } from './types';
 
-const citySchema = new mongoose.Schema({
+const citySchema = new Schema<ICity>({
   name: {
     type: String,
     required: true,
@@ -13,16 +14,14 @@ const citySchema = new mongoose.Schema({
   },
 });
 
-import { Document, Error as MongooseError } from 'mongoose';
-
-citySchema.post('save', function (error: MongooseError, doc: Document, next: (err?: MongooseError) => void) {
+citySchema.post('save', function (error: MongooseError, _doc: Document, next: (err?: MongooseError) => void) {
   if (error.name === 'MongoError' && error.message.includes('11000')) {
-    next(new Error('City name must be unique'));
+    return next(new Error('City name must be unique'));
   } else {
-    next(error);
+    return next(error);
   }
 });
 
-const City = mongoose.model('City', citySchema);
+const City = model<ICity>('City', citySchema);
 
 export default City;

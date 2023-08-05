@@ -1,10 +1,7 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
-};
 Object.defineProperty(exports, "__esModule", { value: true });
-const mongoose_1 = __importDefault(require("mongoose"));
-const citySchema = new mongoose_1.default.Schema({
+const mongoose_1 = require("mongoose");
+const citySchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: true,
@@ -16,13 +13,13 @@ const citySchema = new mongoose_1.default.Schema({
         default: true,
     },
 });
-citySchema.post('save', function (error, doc, next) {
+citySchema.post('save', function (error, _doc, next) {
     if (error.name === 'MongoError' && error.message.includes('11000')) {
-        next(new Error('City name must be unique'));
+        return next(new Error('City name must be unique'));
     }
     else {
-        next(error);
+        return next(error);
     }
 });
-const City = mongoose_1.default.model('City', citySchema);
+const City = (0, mongoose_1.model)('City', citySchema);
 exports.default = City;

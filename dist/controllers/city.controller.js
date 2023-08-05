@@ -12,15 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.putCityById = exports.getCityById = exports.postCity = exports.getCitiesAll = void 0;
+exports.deleteCityById = exports.putCityById = exports.getCityById = exports.postCity = exports.getCitiesAll = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const City_1 = __importDefault(require("../models/City"));
 const city_db_1 = __importDefault(require("../db/city/city-db"));
 function getCitiesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const cityData = (yield city_db_1.default.getData('/cities'));
-            res.status(http_status_codes_1.StatusCodes.OK).send([...cityData]);
+            const cityQuery = (yield City_1.default.find({}, ['-__v']).sort({ name: 1 }));
+            res.status(http_status_codes_1.StatusCodes.OK).send([...cityQuery]);
         }
         catch (err) {
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
@@ -33,7 +33,7 @@ function postCity(req, res) {
         const { name, isActive } = req.body;
         try {
             const newCity = yield City_1.default.create({ name, isActive: isActive === false ? false : true });
-            res.status(http_status_codes_1.StatusCodes.CREATED).send({ name, isActive: isActive === false ? false : true });
+            res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, newCity.toObject()));
         }
         catch (err) {
             if (err.code === 11000) {
@@ -88,3 +88,17 @@ function putCityById(req, res) {
     });
 }
 exports.putCityById = putCityById;
+function deleteCityById(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { id } = req.params;
+        try {
+            const cityQuery = yield City_1.default.findByIdAndDelete(id);
+            console.log(cityQuery);
+            res.status(http_status_codes_1.StatusCodes.OK).send(`City with id "${id}" deleted`);
+        }
+        catch (err) {
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    });
+}
+exports.deleteCityById = deleteCityById;

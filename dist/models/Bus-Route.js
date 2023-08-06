@@ -26,5 +26,5 @@ routeSchema.post('save', function (error, _doc, next) {
         return next(error);
     }
 });
-const BusRoute = (0, mongoose_1.model)('BusRoute', routeSchema);
+const BusRoute = (0, mongoose_1.model)('Bus-Route', routeSchema);
 exports.default = BusRoute;

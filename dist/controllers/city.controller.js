@@ -19,10 +19,10 @@ function getCitiesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const cityQuery = (yield City_1.default.find({}, ['-__v']).sort({ name: 1 }));
-            return res.status(http_status_codes_1.StatusCodes.OK).send([...cityQuery]);
+            res.status(http_status_codes_1.StatusCodes.OK).send([...cityQuery]);
         }
         catch (err) {
-            return res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
         }
     });
 }
@@ -32,13 +32,13 @@ function postCity(req, res) {
         const { name, isActive } = req.body;
         try {
             const cityQuery = yield City_1.default.create({ name, isActive });
-            return res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, cityQuery.toObject()));
+            res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, cityQuery.toObject()));
         }
         catch (err) {
             if (err.code === 11000) {
                 return res.status(http_status_codes_1.StatusCodes.CONFLICT).send({ message: 'Resource already exists' });
             }
-            return res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send('Internal server error');
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send('Internal server error');
         }
     });
 }
@@ -51,10 +51,10 @@ function getCityById(req, res) {
             if (!cityQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send({ message: `City with id "${id}" not found` });
             }
-            return res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, cityQuery.toObject()));
+            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, cityQuery.toObject()));
         }
         catch (err) {
-            return res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
         }
     });
 }
@@ -65,14 +65,13 @@ function putCityById(req, res) {
         const { name, isActive } = req.body;
         try {
             const cityQuery = yield City_1.default.findByIdAndUpdate(id, { name, isActive }, { new: true });
-            console.log(cityQuery);
             if (!cityQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send({ message: `City with id "${id}" not found` });
             }
-            return res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, cityQuery.toObject()));
+            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, cityQuery.toObject()));
         }
         catch (err) {
-            return res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
         }
     });
 }
@@ -81,12 +80,14 @@ function deleteCityById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
         try {
-            const cityQuery = yield City_1.default.findByIdAndDelete(id);
-            console.log(cityQuery);
-            return res.status(http_status_codes_1.StatusCodes.OK).send({ message: `City with id "${id}" deleted` });
+            const cityQuery = yield City_1.default.findByIdAndDelete(id).select('-__v');
+            if (!cityQuery) {
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send({ message: `City with id "${id}" not found` });
+            }
+            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, cityQuery.toObject()));
         }
         catch (err) {
-            return res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
         }
     });
 }

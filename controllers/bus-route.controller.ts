@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
+import BusRoute from '../models/Bus-Route';
 import busRouteDb from '../db/bus-route/bus-route-db';
 import { Route } from '../models/types';
 
@@ -13,13 +14,11 @@ async function getBusRoutesAll(_: Request, res: Response) {
 }
 
 async function postBusRoute(req: Request<{}, {}, Route>, res: Response) {
-  const { id, cityId, name, isActive } = req.body;
-  console.log(`isActive: ${isActive}\n ${typeof isActive}`);
+  const { cityId, name, isActive } = req.body;
   try {
-    await busRouteDb.push(`/bus-routes[]`, { id, cityId, name, isActive: isActive === false ? false : true });
-    res
-      .status(StatusCodes.CREATED)
-      .send(`postBusRoute: ${id}, ${cityId}, ${name}, ${isActive === false ? false : true}`);
+    const busRouteQuery = await BusRoute.create({ cityId, name, isActive });
+    console.log(busRouteQuery);
+    res.status(StatusCodes.CREATED).send({ ...busRouteQuery.toObject() });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }
@@ -43,14 +42,11 @@ async function getBusRouteById(req: Request, res: Response) {
 async function getBusRouteByCityId(req: Request, res: Response) {
   const { id: cityId } = req.params;
   try {
-    const index = await busRouteDb.getIndex('/bus-routes', cityId, 'cityId');
-    if (index === -1) {
-      res.status(StatusCodes.NOT_FOUND).send(`Bus routes from ctiy "${cityId}" not found`);
-      return;
+    const busRouteQuery = await BusRoute.find({ cityId }, ['-__v']).sort({ name: 1 });
+    if (!busRouteQuery.length) {
+      return res.status(StatusCodes.NOT_FOUND).send({ message: `Bus route with city id "${cityId}" not found` });
     }
-    const busRouteData = (await busRouteDb.getData('/bus-routes')) as Route[];
-    const cityBusRoutes = busRouteData.filter((busRoute: Route) => busRoute.cityId === cityId);
-    res.status(StatusCodes.OK).send(cityBusRoutes);
+    res.status(StatusCodes.OK).send([...busRouteQuery]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }

@@ -14,6 +14,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.putBusRouteById = exports.getBusRouteByCityId = exports.getBusRouteById = exports.postBusRoute = exports.getBusRoutesAll = void 0;
 const http_status_codes_1 = require("http-status-codes");
+const Bus_Route_1 = __importDefault(require("../models/Bus-Route"));
 const bus_route_db_1 = __importDefault(require("../db/bus-route/bus-route-db"));
 function getBusRoutesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -29,13 +30,11 @@ function getBusRoutesAll(_, res) {
 exports.getBusRoutesAll = getBusRoutesAll;
 function postBusRoute(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { id, cityId, name, isActive } = req.body;
-        console.log(`isActive: ${isActive}\n ${typeof isActive}`);
+        const { cityId, name, isActive } = req.body;
         try {
-            yield bus_route_db_1.default.push(`/bus-routes[]`, { id, cityId, name, isActive: isActive === false ? false : true });
-            res
-                .status(http_status_codes_1.StatusCodes.CREATED)
-                .send(`postBusRoute: ${id}, ${cityId}, ${name}, ${isActive === false ? false : true}`);
+            const busRouteQuery = yield Bus_Route_1.default.create({ cityId, name, isActive });
+            console.log(busRouteQuery);
+            res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, busRouteQuery.toObject()));
         }
         catch (err) {
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
@@ -65,14 +64,11 @@ function getBusRouteByCityId(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id: cityId } = req.params;
         try {
-            const index = yield bus_route_db_1.default.getIndex('/bus-routes', cityId, 'cityId');
-            if (index === -1) {
-                res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send(`Bus routes from ctiy "${cityId}" not found`);
-                return;
+            const busRouteQuery = yield Bus_Route_1.default.find({ cityId }, ['-__v']).sort({ name: 1 });
+            if (!busRouteQuery.length) {
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send({ message: `Bus route with city id "${cityId}" not found` });
             }
-            const busRouteData = (yield bus_route_db_1.default.getData('/bus-routes'));
-            const cityBusRoutes = busRouteData.filter((busRoute) => busRoute.cityId === cityId);
-            res.status(http_status_codes_1.StatusCodes.OK).send(cityBusRoutes);
+            res.status(http_status_codes_1.StatusCodes.OK).send([...busRouteQuery]);
         }
         catch (err) {
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);

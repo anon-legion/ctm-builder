@@ -27,6 +27,6 @@ routeSchema.post('save', function (error: MongooseError, _doc: Document, next: (
   }
 });
 
-const BusRoute = model<IRoute>('BusRoute', routeSchema);
+const BusRoute = model<IRoute>('Bus-Route', routeSchema);
 
 export default BusRoute;

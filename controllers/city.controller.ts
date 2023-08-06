@@ -8,59 +8,50 @@ import { City as CityType, ICity } from '../models/types';
 async function getCitiesAll(_: Request, res: Response) {
   try {
     const cityQuery = (await City.find({}, ['-__v']).sort({ name: 1 })) as ICity[];
-    res.status(StatusCodes.OK).send([...cityQuery]);
+    return res.status(StatusCodes.OK).send([...cityQuery]);
   } catch (err) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
 
 async function postCity(req: Request<{}, {}, CityType>, res: Response) {
   const { name, isActive } = req.body;
   try {
-    const newCity = await City.create({ name, isActive: isActive === false ? false : true });
-    res.status(StatusCodes.CREATED).send({ ...newCity.toObject() });
+    const cityQuery = await City.create({ name, isActive });
+    return res.status(StatusCodes.CREATED).send({ ...cityQuery.toObject() });
   } catch (err: any) {
     if (err.code === 11000) {
-      res.status(StatusCodes.CONFLICT).send('Resource already exists');
-    } else {
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal server error');
+      return res.status(StatusCodes.CONFLICT).send({ message: 'Resource already exists' });
     }
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR).send('Internal server error');
   }
 }
 
 async function getCityById(req: Request, res: Response) {
+  const { id } = req.params;
   try {
-    const { id } = req.params;
-    const index = await cityDb.getIndex(`/cities`, id);
-    if (index === -1) {
-      res.status(StatusCodes.NOT_FOUND).send(`City with id "${id}" not found`);
-      return;
+    const cityQuery = await City.findById(id);
+    if (!cityQuery) {
+      return res.status(StatusCodes.NOT_FOUND).send({ message: `City with id "${id}" not found` });
     }
-    const cityData = (await cityDb.getData(`/cities[${index}]`)) as CityType;
-    res.status(StatusCodes.OK).send({ ...cityData });
+    return res.status(StatusCodes.OK).send({ ...cityQuery.toObject() });
   } catch (err) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
 
 async function putCityById(req: Request, res: Response) {
+  const { id } = req.params;
+  const { name, isActive } = req.body;
   try {
-    const { id } = req.params;
-    const { name, isActive } = req.body;
-    const index = await cityDb.getIndex(`/cities`, id);
-    if (index === -1) {
-      res.status(StatusCodes.NOT_FOUND).send(`City with id "${id}" not found`);
-      return;
+    const cityQuery = await City.findByIdAndUpdate(id, { name, isActive }, { new: true });
+    console.log(cityQuery);
+    if (!cityQuery) {
+      return res.status(StatusCodes.NOT_FOUND).send({ message: `City with id "${id}" not found` });
     }
-    await cityDb.push(`/cities[${index}]`, {
-      id,
-      name,
-      isActive: isActive === false ? false : true,
-    });
-    const updatedCityData = await cityDb.getData(`/cities[${index}]`);
-    res.status(StatusCodes.OK).send({ updatedCityData });
+    return res.status(StatusCodes.OK).send({ ...cityQuery.toObject() });
   } catch (err) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
 
@@ -69,9 +60,9 @@ async function deleteCityById(req: Request, res: Response) {
   try {
     const cityQuery = await City.findByIdAndDelete(id);
     console.log(cityQuery);
-    res.status(StatusCodes.OK).send(`City with id "${id}" deleted`);
+    return res.status(StatusCodes.OK).send({ message: `City with id "${id}" deleted` });
   } catch (err) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+    return res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
 

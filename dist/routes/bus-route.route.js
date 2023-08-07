@@ -21,5 +21,6 @@ router.route('/:id')
     .all((0, express_validator_1.param)('id').isMongoId())
     .all((0, model_id_validation_1.default)(Bus_Route_1.default))
     .get(bus_route_controller_1.getBusRouteById)
-    .put(bus_route_controller_1.putBusRouteById);
+    .put(bus_route_controller_1.putBusRouteById)
+    .delete(bus_route_controller_1.deleteCityById);
 exports.default = router;

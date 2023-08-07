@@ -5,8 +5,8 @@ import busRouteDb from '../db/bus-route/bus-route-db';
 
 async function getBusRoutesAll(_: Request, res: Response) {
   try {
-    const busRouteData = await busRouteDb.getData('/bus-routes');
-    res.status(StatusCodes.OK).send({ busRouteData });
+    const busRouteQuery = await BusRoute.find({}, ['-__v']).sort({ name: 1 });
+    res.status(StatusCodes.OK).send([...busRouteQuery]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }
@@ -72,4 +72,17 @@ async function putBusRouteById(req: Request, res: Response) {
   }
 }
 
-export { getBusRoutesAll, postBusRoute, getBusRouteById, getBusRouteByCityId, putBusRouteById };
+async function deleteCityById(req: Request, res: Response) {
+  const { id } = req.params;
+  try {
+    const busRouteQuery = await BusRoute.findByIdAndDelete(id).select('-__v');
+    if (!busRouteQuery) {
+      return res.status(StatusCodes.NOT_FOUND).send({ message: `City with id "${id}" not found` });
+    }
+    res.status(StatusCodes.OK).send({ ...busRouteQuery.toObject() });
+  } catch (err) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+  }
+}
+
+export { getBusRoutesAll, postBusRoute, getBusRouteById, getBusRouteByCityId, putBusRouteById, deleteCityById };

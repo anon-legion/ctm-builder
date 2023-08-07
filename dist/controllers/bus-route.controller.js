@@ -12,15 +12,15 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.putBusRouteById = exports.getBusRouteByCityId = exports.getBusRouteById = exports.postBusRoute = exports.getBusRoutesAll = void 0;
+exports.deleteCityById = exports.putBusRouteById = exports.getBusRouteByCityId = exports.getBusRouteById = exports.postBusRoute = exports.getBusRoutesAll = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const Bus_Route_1 = __importDefault(require("../models/Bus-Route"));
 const bus_route_db_1 = __importDefault(require("../db/bus-route/bus-route-db"));
 function getBusRoutesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const busRouteData = yield bus_route_db_1.default.getData('/bus-routes');
-            res.status(http_status_codes_1.StatusCodes.OK).send({ busRouteData });
+            const busRouteQuery = yield Bus_Route_1.default.find({}, ['-__v']).sort({ name: 1 });
+            res.status(http_status_codes_1.StatusCodes.OK).send([...busRouteQuery]);
         }
         catch (err) {
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
@@ -100,3 +100,19 @@ function putBusRouteById(req, res) {
     });
 }
 exports.putBusRouteById = putBusRouteById;
+function deleteCityById(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { id } = req.params;
+        try {
+            const busRouteQuery = yield Bus_Route_1.default.findByIdAndDelete(id).select('-__v');
+            if (!busRouteQuery) {
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send({ message: `City with id "${id}" not found` });
+            }
+            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, busRouteQuery.toObject()));
+        }
+        catch (err) {
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+        }
+    });
+}
+exports.deleteCityById = deleteCityById;

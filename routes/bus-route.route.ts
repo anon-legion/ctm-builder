@@ -1,6 +1,12 @@
 import express from 'express';
 import { body, param } from 'express-validator';
-import { postBusRoute, getBusRoutesAll, getBusRouteById, putBusRouteById } from '../controllers/bus-route.controller';
+import {
+  postBusRoute,
+  getBusRoutesAll,
+  getBusRouteById,
+  putBusRouteById,
+  deleteCityById,
+} from '../controllers/bus-route.controller';
 import expressValidatorHandler from '../middleware/express-validator-handler';
 import modelIdValidation from '../middleware/model-id-validation';
 import baseValidationChain from './utils/base-validation-chain';
@@ -25,5 +31,6 @@ router.route('/:id')
   .all(modelIdValidation(BusRoute))
   .get(getBusRouteById)
   .put(putBusRouteById)
+  .delete(deleteCityById)
 
 export default router;

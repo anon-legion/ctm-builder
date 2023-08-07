@@ -16,7 +16,6 @@ async function postBusRoute(req: Request, res: Response) {
   const { cityId, name, isActive } = req.body;
   try {
     const busRouteQuery = await BusRoute.create({ cityId, name, isActive });
-    console.log(busRouteQuery);
     res.status(StatusCodes.CREATED).send({ ...busRouteQuery.toObject() });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);

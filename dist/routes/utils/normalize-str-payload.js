@@ -1,0 +1,13 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_validator_1 = require("express-validator");
+const toTitleCase = (text) => {
+    return text.toLowerCase().replace(/\d+[A-Za-z]|\b[a-z]/g, (a) => a.toUpperCase());
+};
+function payloadToTitleCase() {
+    return (0, express_validator_1.body)().custom((obj) => {
+        obj.name = toTitleCase(obj.name);
+        return obj;
+    });
+}
+exports.default = payloadToTitleCase;

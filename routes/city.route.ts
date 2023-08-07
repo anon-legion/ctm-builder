@@ -4,8 +4,8 @@ import { postCity, getCitiesAll, getCityById, putCityById, deleteCityById } from
 import { getBusRouteByCityId } from '../controllers/bus-route.controller';
 import modelIdValidation from '../middleware/model-id-validation';
 import expressValidatorHandler from '../middleware/express-validator-handler';
-import baseValidationChain from './utils/base-validation-chain';
-import payloadToTitleCase from './utils/normalize-city-payload';
+import baseStrValidation from './utils/base-validation-chain';
+import payloadToTitleCase from './utils/normalize-str-payload';
 import City from '../models/City';
 
 // initialize express router
@@ -14,7 +14,7 @@ const router = express.Router();
 // prettier-ignore
 router.route('/')
   .post(
-    baseValidationChain('name').isString().isLength({ min: 4, max: 50 }).escape(),
+    baseStrValidation('name').isLength({ min: 4, max: 50 }).escape(),
     body('isActive').isBoolean({strict: true}),
     payloadToTitleCase(),
     expressValidatorHandler,

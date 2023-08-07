@@ -10,13 +10,13 @@ const bus_route_controller_1 = require("../controllers/bus-route.controller");
 const model_id_validation_1 = __importDefault(require("../middleware/model-id-validation"));
 const express_validator_handler_1 = __importDefault(require("../middleware/express-validator-handler"));
 const base_validation_chain_1 = __importDefault(require("./utils/base-validation-chain"));
-const normalize_city_payload_1 = __importDefault(require("./utils/normalize-city-payload"));
+const normalize_str_payload_1 = __importDefault(require("./utils/normalize-str-payload"));
 const City_1 = __importDefault(require("../models/City"));
 // initialize express router
 const router = express_1.default.Router();
 // prettier-ignore
 router.route('/')
-    .post((0, base_validation_chain_1.default)('name').isString().isLength({ min: 4, max: 50 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, normalize_city_payload_1.default)(), express_validator_handler_1.default, city_controller_1.postCity)
+    .post((0, base_validation_chain_1.default)('name').isLength({ min: 4, max: 50 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, normalize_str_payload_1.default)(), express_validator_handler_1.default, city_controller_1.postCity)
     .get(city_controller_1.getCitiesAll);
 // prettier-ignore
 router.route('/:id')

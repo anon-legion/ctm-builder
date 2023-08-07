@@ -33,7 +33,6 @@ function postBusRoute(req, res) {
         const { cityId, name, isActive } = req.body;
         try {
             const busRouteQuery = yield Bus_Route_1.default.create({ cityId, name, isActive });
-            console.log(busRouteQuery);
             res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, busRouteQuery.toObject()));
         }
         catch (err) {

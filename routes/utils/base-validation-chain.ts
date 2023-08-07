@@ -1,7 +1,7 @@
 import { body } from 'express-validator';
 
-const baseValidationChain = (field: string) => {
-  return body(field).trim().notEmpty();
+const baseStrValidation = (field: string) => {
+  return body(field).trim().notEmpty().isString();
 };
 
-export default baseValidationChain;
+export default baseStrValidation;

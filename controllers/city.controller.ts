@@ -1,18 +1,17 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import City from '../models/City';
-import { City as CityType, ICity } from '../models/types';
 
 async function getCitiesAll(_: Request, res: Response) {
   try {
-    const cityQuery = (await City.find({}, ['-__v']).sort({ name: 1 })) as ICity[];
+    const cityQuery = await City.find({}, ['-__v']).sort({ name: 1 });
     res.status(StatusCodes.OK).send([...cityQuery]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
 
-async function postCity(req: Request<{}, {}, CityType>, res: Response) {
+async function postCity(req: Request, res: Response) {
   const { name, isActive } = req.body;
   try {
     const cityQuery = await City.create({ name, isActive });

@@ -2,18 +2,17 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import BusRoute from '../models/Bus-Route';
 import busRouteDb from '../db/bus-route/bus-route-db';
-import { Route } from '../models/types';
 
 async function getBusRoutesAll(_: Request, res: Response) {
   try {
-    const busRouteData = (await busRouteDb.getData('/bus-routes')) as Route[];
+    const busRouteData = await busRouteDb.getData('/bus-routes');
     res.status(StatusCodes.OK).send({ busRouteData });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }
 }
 
-async function postBusRoute(req: Request<{}, {}, Route>, res: Response) {
+async function postBusRoute(req: Request, res: Response) {
   const { cityId, name, isActive } = req.body;
   try {
     const busRouteQuery = await BusRoute.create({ cityId, name, isActive });
@@ -32,7 +31,7 @@ async function getBusRouteById(req: Request, res: Response) {
       res.status(StatusCodes.NOT_FOUND).send(`Bus route with id "${id}" not found`);
       return;
     }
-    const busRouteData = (await busRouteDb.getData(`/bus-routes[${index}]`)) as Route;
+    const busRouteData = await busRouteDb.getData(`/bus-routes[${index}]`);
     res.status(StatusCodes.OK).send({ busRouteData });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);

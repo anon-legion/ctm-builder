@@ -19,7 +19,7 @@ const bus_route_db_1 = __importDefault(require("../db/bus-route/bus-route-db"));
 function getBusRoutesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const busRouteData = (yield bus_route_db_1.default.getData('/bus-routes'));
+            const busRouteData = yield bus_route_db_1.default.getData('/bus-routes');
             res.status(http_status_codes_1.StatusCodes.OK).send({ busRouteData });
         }
         catch (err) {
@@ -51,7 +51,7 @@ function getBusRouteById(req, res) {
                 res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send(`Bus route with id "${id}" not found`);
                 return;
             }
-            const busRouteData = (yield bus_route_db_1.default.getData(`/bus-routes[${index}]`));
+            const busRouteData = yield bus_route_db_1.default.getData(`/bus-routes[${index}]`);
             res.status(http_status_codes_1.StatusCodes.OK).send({ busRouteData });
         }
         catch (err) {

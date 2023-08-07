@@ -18,7 +18,7 @@ const City_1 = __importDefault(require("../models/City"));
 function getCitiesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const cityQuery = (yield City_1.default.find({}, ['-__v']).sort({ name: 1 }));
+            const cityQuery = yield City_1.default.find({}, ['-__v']).sort({ name: 1 });
             res.status(http_status_codes_1.StatusCodes.OK).send([...cityQuery]);
         }
         catch (err) {

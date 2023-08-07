@@ -1,15 +1,15 @@
 import { body } from 'express-validator';
-import { City } from '../../models/types';
+import { ICity, IRoute } from '../../models/types';
 
 const toTitleCase = (text: string) => {
   return text.toLowerCase().replace(/\b./g, (a) => a.toUpperCase());
 };
 
-const normalizeCityPayload = () => {
-  return body().custom((obj: City) => {
+function payloadToTitleCase<T extends ICity | IRoute>() {
+  return body().custom((obj: T) => {
     obj.name = toTitleCase(obj.name);
     return obj;
   });
-};
+}
 
-export default normalizeCityPayload;
+export default payloadToTitleCase;

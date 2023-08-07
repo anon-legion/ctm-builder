@@ -51,22 +51,14 @@ async function getBusRouteByCityId(req: Request, res: Response) {
 }
 
 async function putBusRouteById(req: Request, res: Response) {
+  const { id } = req.params;
+  const { cityId, name, isActive } = req.body;
   try {
-    const { id } = req.params;
-    const { cityId, name, isActive } = req.body;
-    const index = await busRouteDb.getIndex(`/bus-routes`, id);
-    if (index === -1) {
-      res.status(StatusCodes.NOT_FOUND).send(`Bus Route with id "${id}" not found`);
-      return;
+    const busRouteQuery = await BusRoute.findByIdAndUpdate(id, { cityId, name, isActive }, { new: true });
+    if (!busRouteQuery) {
+      return res.status(StatusCodes.NOT_FOUND).send({ message: `Bus route with id "${id}" not found` });
     }
-    await busRouteDb.push(`/bus-routes[${index}]`, {
-      id,
-      cityId,
-      name,
-      isActive: isActive === false ? false : true,
-    });
-    const updatedBusRouteData = await busRouteDb.getData(`/bus-routes[${index}]`);
-    res.status(StatusCodes.OK).send({ updatedBusRouteData });
+    res.status(StatusCodes.OK).send({ ...busRouteQuery.toObject() });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR);
   }

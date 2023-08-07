@@ -26,8 +26,14 @@ router.route('/')
 router.route('/:id')
   .all(param('id').isMongoId())
   .all(modelIdValidation(City))
+  .put(
+    baseStrValidation('name').isLength({ min: 4, max: 50 }).escape(),
+    body('isActive').isBoolean({strict: true}),
+    payloadToTitleCase(),
+    expressValidatorHandler,
+    putCityById
+  )
   .get(getCityById)
-  .put(putCityById)
   .delete(deleteCityById)
 
 // prettier-ignore

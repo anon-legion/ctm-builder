@@ -77,22 +77,14 @@ function getBusRouteByCityId(req, res) {
 exports.getBusRouteByCityId = getBusRouteByCityId;
 function putBusRouteById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
+        const { id } = req.params;
+        const { cityId, name, isActive } = req.body;
         try {
-            const { id } = req.params;
-            const { cityId, name, isActive } = req.body;
-            const index = yield bus_route_db_1.default.getIndex(`/bus-routes`, id);
-            if (index === -1) {
-                res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send(`Bus Route with id "${id}" not found`);
-                return;
+            const busRouteQuery = yield Bus_Route_1.default.findByIdAndUpdate(id, { cityId, name, isActive }, { new: true });
+            if (!busRouteQuery) {
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send({ message: `Bus route with id "${id}" not found` });
             }
-            yield bus_route_db_1.default.push(`/bus-routes[${index}]`, {
-                id,
-                cityId,
-                name,
-                isActive: isActive === false ? false : true,
-            });
-            const updatedBusRouteData = yield bus_route_db_1.default.getData(`/bus-routes[${index}]`);
-            res.status(http_status_codes_1.StatusCodes.OK).send({ updatedBusRouteData });
+            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, busRouteQuery.toObject()));
         }
         catch (err) {
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);

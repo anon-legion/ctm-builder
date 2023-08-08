@@ -9,7 +9,6 @@ export function modelIdValidation<T extends ICity | IRoute>(model: Model<T>) {
 
     try {
       const doc = await model.findById(id);
-      console.log(doc);
 
       if (!doc) {
         const nullModel: T = Object.keys(model.schema.obj).reduce((acc, key) => ({ ...acc, [key]: null }), {} as T);
@@ -18,7 +17,6 @@ export function modelIdValidation<T extends ICity | IRoute>(model: Model<T>) {
 
       next();
     } catch (err) {
-      console.error(err);
       const nullModel: T = Object.keys(model.schema.obj).reduce((acc, key) => ({ ...acc, [key]: null }), {} as T);
       res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ message: 'Server error', ...nullModel });
     }

@@ -16,7 +16,6 @@ function modelIdValidation(model) {
         const { id } = req.params;
         try {
             const doc = yield model.findById(id);
-            console.log(doc);
             if (!doc) {
                 const nullModel = Object.keys(model.schema.obj).reduce((acc, key) => (Object.assign(Object.assign({}, acc), { [key]: null })), {});
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send(Object.assign({ message: `document with id "${id}" not found` }, nullModel));
@@ -24,7 +23,6 @@ function modelIdValidation(model) {
             next();
         }
         catch (err) {
-            console.error(err);
             const nullModel = Object.keys(model.schema.obj).reduce((acc, key) => (Object.assign(Object.assign({}, acc), { [key]: null })), {});
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send(Object.assign({ message: 'Server error' }, nullModel));
         }

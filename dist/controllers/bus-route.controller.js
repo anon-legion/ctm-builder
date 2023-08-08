@@ -15,7 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteBusRouteById = exports.putBusRouteById = exports.getBusRouteByCityId = exports.getBusRouteById = exports.postBusRoute = exports.getBusRoutesAll = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const Bus_Route_1 = __importDefault(require("../models/Bus-Route"));
-const bus_route_db_1 = __importDefault(require("../db/bus-route/bus-route-db"));
 const generic_error_object_1 = __importDefault(require("./utils/generic-error-object"));
 function getBusRoutesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -46,13 +45,11 @@ function getBusRouteById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
         try {
-            const index = yield bus_route_db_1.default.getIndex('/bus-routes', id);
-            if (index === -1) {
-                res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Bus route with id "${id}" not found`, Bus_Route_1.default));
-                return;
+            const busRouteQuery = yield Bus_Route_1.default.findById(id);
+            if (!busRouteQuery) {
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Bus route with id "${id}" not found`, Bus_Route_1.default));
             }
-            const busRouteData = yield bus_route_db_1.default.getData(`/bus-routes[${index}]`);
-            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, busRouteData));
+            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, busRouteQuery.toObject()));
         }
         catch (err) {
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', Bus_Route_1.default));

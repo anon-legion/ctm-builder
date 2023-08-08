@@ -12,10 +12,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteCityById = exports.putBusRouteById = exports.getBusRouteByCityId = exports.getBusRouteById = exports.postBusRoute = exports.getBusRoutesAll = void 0;
+exports.deleteBusRouteById = exports.putBusRouteById = exports.getBusRouteByCityId = exports.getBusRouteById = exports.postBusRoute = exports.getBusRoutesAll = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const Bus_Route_1 = __importDefault(require("../models/Bus-Route"));
 const bus_route_db_1 = __importDefault(require("../db/bus-route/bus-route-db"));
+const generic_error_object_1 = __importDefault(require("./utils/generic-error-object"));
 function getBusRoutesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -23,7 +24,7 @@ function getBusRoutesAll(_, res) {
             res.status(http_status_codes_1.StatusCodes.OK).send([...busRouteQuery]);
         }
         catch (err) {
-            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send([]);
         }
     });
 }
@@ -36,7 +37,7 @@ function postBusRoute(req, res) {
             res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, busRouteQuery.toObject()));
         }
         catch (err) {
-            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', Bus_Route_1.default));
         }
     });
 }
@@ -47,14 +48,14 @@ function getBusRouteById(req, res) {
         try {
             const index = yield bus_route_db_1.default.getIndex('/bus-routes', id);
             if (index === -1) {
-                res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send(`Bus route with id "${id}" not found`);
+                res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Bus route with id "${id}" not found`, Bus_Route_1.default));
                 return;
             }
             const busRouteData = yield bus_route_db_1.default.getData(`/bus-routes[${index}]`);
-            res.status(http_status_codes_1.StatusCodes.OK).send({ busRouteData });
+            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, busRouteData));
         }
         catch (err) {
-            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', Bus_Route_1.default));
         }
     });
 }
@@ -65,12 +66,12 @@ function getBusRouteByCityId(req, res) {
         try {
             const busRouteQuery = yield Bus_Route_1.default.find({ cityId }, ['-__v']).sort({ name: 1 });
             if (!busRouteQuery.length) {
-                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send({ message: `Bus route with city id "${cityId}" not found` });
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send([]);
             }
             res.status(http_status_codes_1.StatusCodes.OK).send([...busRouteQuery]);
         }
         catch (err) {
-            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send([]);
         }
     });
 }
@@ -82,29 +83,29 @@ function putBusRouteById(req, res) {
         try {
             const busRouteQuery = yield Bus_Route_1.default.findByIdAndUpdate(id, { cityId, name, isActive }, { new: true });
             if (!busRouteQuery) {
-                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send({ message: `Bus route with id "${id}" not found` });
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Bus route with id "${id} not found`, Bus_Route_1.default));
             }
             res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, busRouteQuery.toObject()));
         }
         catch (err) {
-            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', Bus_Route_1.default));
         }
     });
 }
 exports.putBusRouteById = putBusRouteById;
-function deleteCityById(req, res) {
+function deleteBusRouteById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
         try {
             const busRouteQuery = yield Bus_Route_1.default.findByIdAndDelete(id).select('-__v');
             if (!busRouteQuery) {
-                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send({ message: `City with id "${id}" not found` });
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Bus route with id "${id}" not found`, Bus_Route_1.default));
             }
             res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, busRouteQuery.toObject()));
         }
         catch (err) {
-            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', Bus_Route_1.default));
         }
     });
 }
-exports.deleteCityById = deleteCityById;
+exports.deleteBusRouteById = deleteBusRouteById;

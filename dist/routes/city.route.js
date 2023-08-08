@@ -20,7 +20,6 @@ router.route('/')
     .get(city_controller_1.getCitiesAll);
 // prettier-ignore
 router.route('/:id')
-    .all((0, express_validator_1.param)('id').isMongoId())
     .all((0, model_id_validation_1.default)(City_1.default))
     .put((0, base_validation_chain_1.default)('name').isLength({ min: 4, max: 50 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, normalize_str_payload_1.default)(), express_validator_handler_1.default, city_controller_1.putCityById)
     .get(city_controller_1.getCityById)

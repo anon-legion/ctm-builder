@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCityById = exports.putCityById = exports.getCityById = exports.postCity = exports.getCitiesAll = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const City_1 = __importDefault(require("../models/City"));
+const generic_error_object_1 = __importDefault(require("./utils/generic-error-object"));
 function getCitiesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
@@ -22,7 +23,7 @@ function getCitiesAll(_, res) {
             res.status(http_status_codes_1.StatusCodes.OK).send([...cityQuery]);
         }
         catch (err) {
-            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send([]);
         }
     });
 }
@@ -36,9 +37,9 @@ function postCity(req, res) {
         }
         catch (err) {
             if (err.code === 11000) {
-                return res.status(http_status_codes_1.StatusCodes.CONFLICT).send({ message: 'Resource already exists' });
+                return res.status(http_status_codes_1.StatusCodes.CONFLICT).send((0, generic_error_object_1.default)('Resource already exists', City_1.default));
             }
-            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send('Internal server error');
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', City_1.default));
         }
     });
 }
@@ -49,12 +50,12 @@ function getCityById(req, res) {
         try {
             const cityQuery = yield City_1.default.findById(id);
             if (!cityQuery) {
-                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send({ message: `City with id "${id}" not found` });
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`City with id "${id}" not found`, City_1.default));
             }
             res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, cityQuery.toObject()));
         }
         catch (err) {
-            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', City_1.default));
         }
     });
 }
@@ -66,12 +67,12 @@ function putCityById(req, res) {
         try {
             const cityQuery = yield City_1.default.findByIdAndUpdate(id, { name, isActive }, { new: true });
             if (!cityQuery) {
-                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send({ message: `City with id "${id}" not found` });
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`City with id "${id}" not found`, City_1.default));
             }
             res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, cityQuery.toObject()));
         }
         catch (err) {
-            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', City_1.default));
         }
     });
 }
@@ -82,12 +83,12 @@ function deleteCityById(req, res) {
         try {
             const cityQuery = yield City_1.default.findByIdAndDelete(id).select('-__v');
             if (!cityQuery) {
-                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send({ message: `City with id "${id}" not found` });
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`City with id "${id}" not found`, City_1.default));
             }
             res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, cityQuery.toObject()));
         }
         catch (err) {
-            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR);
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', City_1.default));
         }
     });
 }

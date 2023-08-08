@@ -23,5 +23,5 @@ router.route('/:id')
     .all((0, model_id_validation_1.default)(Bus_Route_1.default))
     .put((0, base_validation_chain_1.default)('name').isLength({ min: 4, max: 50 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, normalize_str_payload_1.default)(), express_validator_handler_1.default, bus_route_controller_1.putBusRouteById)
     .get(bus_route_controller_1.getBusRouteById)
-    .delete(bus_route_controller_1.deleteCityById);
+    .delete(bus_route_controller_1.deleteBusRouteById);
 exports.default = router;

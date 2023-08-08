@@ -5,7 +5,7 @@ import {
   getBusRoutesAll,
   getBusRouteById,
   putBusRouteById,
-  deleteCityById,
+  deleteBusRouteById,
 } from '../controllers/bus-route.controller';
 import expressValidatorHandler from '../middleware/express-validator-handler';
 import modelIdValidation from '../middleware/model-id-validation';
@@ -39,6 +39,6 @@ router.route('/:id')
     putBusRouteById
   )
   .get(getBusRouteById)
-  .delete(deleteCityById)
+  .delete(deleteBusRouteById)
 
 export default router;

@@ -9,15 +9,18 @@ export function modelIdValidation<T extends ICity | IRoute>(model: Model<T>) {
 
     try {
       const doc = await model.findById(id);
+      console.log(doc);
 
       if (!doc) {
-        return res.status(StatusCodes.NOT_FOUND).json({ message: `document with id "${id}" not found` });
+        const nullModel: T = Object.keys(model.schema.obj).reduce((acc, key) => ({ ...acc, [key]: null }), {} as T);
+        return res.status(StatusCodes.NOT_FOUND).send({ message: `document with id "${id}" not found`, ...nullModel });
       }
 
       next();
     } catch (err) {
       console.error(err);
-      res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({ message: 'Server error' });
+      const nullModel: T = Object.keys(model.schema.obj).reduce((acc, key) => ({ ...acc, [key]: null }), {} as T);
+      res.status(StatusCodes.INTERNAL_SERVER_ERROR).send({ message: 'Server error', ...nullModel });
     }
   };
 }

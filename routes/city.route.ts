@@ -24,7 +24,6 @@ router.route('/')
 
 // prettier-ignore
 router.route('/:id')
-  .all(param('id').isMongoId())
   .all(modelIdValidation(City))
   .put(
     baseStrValidation('name').isLength({ min: 4, max: 50 }).escape(),

@@ -25,7 +25,7 @@ async function postBusRoute(req: Request, res: Response) {
 async function getBusRouteById(req: Request, res: Response) {
   const { id } = req.params;
   try {
-    const busRouteQuery = await BusRoute.findById(id);
+    const busRouteQuery = await BusRoute.findById(id).select('-__v');
     if (!busRouteQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Bus route with id "${id}" not found`, BusRoute));
     }
@@ -52,7 +52,9 @@ async function putBusRouteById(req: Request, res: Response) {
   const { id } = req.params;
   const { cityId, name, isActive } = req.body;
   try {
-    const busRouteQuery = await BusRoute.findByIdAndUpdate(id, { cityId, name, isActive }, { new: true });
+    const busRouteQuery = await BusRoute.findByIdAndUpdate(id, { cityId, name, isActive }, { new: true }).select(
+      '-__v'
+    );
     if (!busRouteQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Bus route with id "${id} not found`, BusRoute));
     }

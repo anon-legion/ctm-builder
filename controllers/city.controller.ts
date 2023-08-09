@@ -28,7 +28,7 @@ async function postCity(req: Request, res: Response) {
 async function getCityById(req: Request, res: Response) {
   const { id } = req.params;
   try {
-    const cityQuery = await City.findById(id);
+    const cityQuery = await City.findById(id).select('__v');
     if (!cityQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`City with id "${id}" not found`, City));
     }
@@ -42,7 +42,7 @@ async function putCityById(req: Request, res: Response) {
   const { id } = req.params;
   const { name, isActive } = req.body;
   try {
-    const cityQuery = await City.findByIdAndUpdate(id, { name, isActive }, { new: true });
+    const cityQuery = await City.findByIdAndUpdate(id, { name, isActive }, { new: true }).select('__v');
     if (!cityQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`City with id "${id}" not found`, City));
     }

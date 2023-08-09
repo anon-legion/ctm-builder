@@ -1,5 +1,5 @@
 import express from 'express';
-import { postPlace, getPlacesAll, getPlaceById, putPlaceById } from '../controllers/place.controller';
+import { postPlace, getPlacesAll, getPlaceById, putPlaceById, deletePlaceById } from '../controllers/place.controller';
 
 // initialize express router
 const router = express.Router();
@@ -12,6 +12,7 @@ router.route('/')
 // prettier-ignore
 router.route('/:id')
   .get(getPlaceById)
-  .put(putPlaceById);
+  .put(putPlaceById)
+  .delete(deletePlaceById)
 
 export default router;

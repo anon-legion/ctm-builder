@@ -14,5 +14,6 @@ router.route('/')
 // prettier-ignore
 router.route('/:id')
     .get(place_controller_1.getPlaceById)
-    .put(place_controller_1.putPlaceById);
+    .put(place_controller_1.putPlaceById)
+    .delete(place_controller_1.deletePlaceById);
 exports.default = router;

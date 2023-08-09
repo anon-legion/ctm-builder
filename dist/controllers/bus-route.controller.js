@@ -45,7 +45,7 @@ function getBusRouteById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
         try {
-            const busRouteQuery = yield Bus_Route_1.default.findById(id);
+            const busRouteQuery = yield Bus_Route_1.default.findById(id).select('-__v');
             if (!busRouteQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Bus route with id "${id}" not found`, Bus_Route_1.default));
             }
@@ -78,7 +78,7 @@ function putBusRouteById(req, res) {
         const { id } = req.params;
         const { cityId, name, isActive } = req.body;
         try {
-            const busRouteQuery = yield Bus_Route_1.default.findByIdAndUpdate(id, { cityId, name, isActive }, { new: true });
+            const busRouteQuery = yield Bus_Route_1.default.findByIdAndUpdate(id, { cityId, name, isActive }, { new: true }).select('-__v');
             if (!busRouteQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Bus route with id "${id} not found`, Bus_Route_1.default));
             }

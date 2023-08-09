@@ -10,6 +10,10 @@ export interface IRoute extends ICity {
   cityId: Types.ObjectId;
 }
 
+export interface IPlace extends IRoute {
+  aliases: string[];
+}
+
 export interface City {
   id: string;
   name: string;

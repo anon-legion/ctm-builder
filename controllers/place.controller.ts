@@ -1,68 +1,67 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import placeDb from '../db/place/place-db';
-import { Place } from '../models/types';
+import Place from '../models/Place';
+import errorObject from './utils/generic-error-object';
 
 async function getPlacesAll(_: Request, res: Response) {
   try {
-    const placeData = (await placeDb.getData('/places')) as Place[];
-    res.status(StatusCodes.OK).send({ placeData });
+    const placeQuery = await Place.find({}, ['-__v']).sort({ name: 1 });
+    res.status(StatusCodes.OK).send([...placeQuery]);
   } catch (err) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send([]);
   }
 }
 
-async function postPlace(req: Request<{}, {}, Place>, res: Response) {
+async function postPlace(req: Request, res: Response) {
   const { cityId, name, aliases, isActive } = req.body;
-  console.log(`isActive: ${isActive}\n ${typeof isActive}`);
-  const placeCount = await placeDb.count('/places');
-  const id = Number(placeCount) + 1;
   try {
-    await placeDb.push(`/places[]`, { id, cityId, name, aliases, isActive: isActive === false ? false : true });
-    res
-      .status(StatusCodes.CREATED)
-      .send(`postPlace: ${id}, ${cityId}, ${name}, ${aliases}, ${isActive === false ? false : true}`);
+    const placeQuery = await Place.create({ cityId, name, aliases, isActive });
+    res.status(StatusCodes.CREATED).send({ ...placeQuery.toObject() });
   } catch (err) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal server error', Place));
   }
 }
 
-async function getPlaceById(req: Request<Place, {}, {}>, res: Response) {
+async function getPlaceById(req: Request, res: Response) {
+  const { id } = req.params;
   try {
-    const id = Number(req.params.id);
-    const index = await placeDb.getIndex(`/places`, Number(id));
-    if (index === -1) {
-      res.status(StatusCodes.NOT_FOUND).send(`Place with id "${id}" not found`);
-      return;
+    const placeQuery = await Place.findById(id).select('-__v');
+    if (!placeQuery) {
+      return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Place with id "${id}" not found`, Place));
     }
-    const placeData = (await placeDb.getData(`/places[${index}]`)) as Place;
-    res.status(StatusCodes.OK).send({ placeData });
+    res.status(StatusCodes.OK).send({ ...placeQuery.toObject() });
   } catch (err) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal server error', Place));
   }
 }
 
-async function putPlaceById(req: Request<Place, {}, Place>, res: Response) {
+async function putPlaceById(req: Request, res: Response) {
+  const { id } = req.params;
+  const { cityId, name, aliases, isActive } = req.body;
   try {
-    const id = Number(req.params.id);
-    const { cityId, name, aliases, isActive } = req.body;
-    const index = await placeDb.getIndex(`/places`, id);
-    if (index === -1) {
-      res.status(StatusCodes.NOT_FOUND).send(`Place with id "${id}" not found`);
-      return;
+    const placeQuery = await Place.findByIdAndUpdate(id, { cityId, name, aliases, isActive }, { new: true }).select(
+      '-__v'
+    );
+    if (!placeQuery) {
+      return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Place with id "${id}" not found`, Place));
     }
-    await placeDb.push(`/places[${index}]`, {
-      id,
-      cityId,
-      name,
-      aliases,
-      isActive: isActive === false ? false : true,
-    });
-    const updatedPlaceData = await placeDb.getData(`/places[${index}]`);
-    res.status(StatusCodes.OK).send({ updatedPlaceData });
+    res.status(StatusCodes.OK).send({ ...placeQuery.toObject() });
   } catch (err) {
-    res.status(StatusCodes.INTERNAL_SERVER_ERROR);
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal server error', Place));
   }
 }
 
-export { getPlacesAll, postPlace, getPlaceById, putPlaceById };
+async function deletePlaceById(req: Request, res: Response) {
+  const { id } = req.params;
+  try {
+    const placeQuery = await Place.findByIdAndDelete(id).select('-__v');
+    if (!placeQuery) {
+      return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Place with id "${id}" not found`, Place));
+    }
+    res.status(StatusCodes.OK).send({ ...placeQuery.toObject() });
+  } catch (err) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal server error', Place));
+  }
+}
+
+export { getPlacesAll, postPlace, getPlaceById, putPlaceById, deletePlaceById };

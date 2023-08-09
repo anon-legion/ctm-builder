@@ -19,7 +19,7 @@ const generic_error_object_1 = __importDefault(require("./utils/generic-error-ob
 function getPlacesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const placeQuery = yield Place_1.default.find({}, ['-__v']).sort({ name: 1 });
+            const placeQuery = yield Place_1.default.find({}, ['-__v']).sort({ name: 1 }).populate('cityId', 'name');
             res.status(http_status_codes_1.StatusCodes.OK).send([...placeQuery]);
         }
         catch (err) {
@@ -32,7 +32,11 @@ function postPlace(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { cityId, name, aliases, isActive } = req.body;
         try {
-            const placeQuery = yield Place_1.default.create({ cityId, name, aliases, isActive });
+            const newPlace = (yield Place_1.default.create({ cityId, name, aliases, isActive })).toObject();
+            const placeQuery = yield Place_1.default.findById(newPlace._id).select('-__v').populate('cityId', 'name');
+            if (!placeQuery) {
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Place with id "${newPlace._id}" not found`, Place_1.default));
+            }
             res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, placeQuery.toObject()));
         }
         catch (err) {

@@ -32,8 +32,8 @@ function postPlace(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { cityId, name, aliases, isActive } = req.body;
         try {
-            const newPlace = (yield (yield Place_1.default.create({ cityId, name, aliases, isActive })).populate('cityId', 'name')).toObject();
-            res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, newPlace));
+            const newPlace = yield (yield Place_1.default.create({ cityId, name, aliases, isActive })).populate('cityId', 'name');
+            res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, newPlace.toObject()));
         }
         catch (err) {
             if (err.code === 11000) {

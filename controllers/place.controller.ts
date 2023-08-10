@@ -15,10 +15,8 @@ async function getPlacesAll(_: Request, res: Response) {
 async function postPlace(req: Request, res: Response) {
   const { cityId, name, aliases, isActive } = req.body;
   try {
-    const newPlace = (
-      await (await Place.create({ cityId, name, aliases, isActive })).populate('cityId', 'name')
-    ).toObject();
-    res.status(StatusCodes.CREATED).send({ ...newPlace });
+    const newPlace = await (await Place.create({ cityId, name, aliases, isActive })).populate('cityId', 'name');
+    res.status(StatusCodes.CREATED).send({ ...newPlace.toObject() });
   } catch (err: any) {
     if (err.code === 11000) {
       return res.status(StatusCodes.CONFLICT).send(errorObject('Resource already exists', Place));

@@ -14,6 +14,14 @@ export interface IPlace extends IRoute {
   aliases: string[];
 }
 
+export interface IRouteStop {
+  _id: Types.ObjectId;
+  routeId: IRoute['_id'];
+  placeId: IPlace['_id'];
+  distance: number;
+  isActive: boolean;
+}
+
 export interface City {
   id: string;
   name: string;

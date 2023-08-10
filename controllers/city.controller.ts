@@ -47,7 +47,10 @@ async function putCityById(req: Request, res: Response) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`City with id "${id}" not found`, City));
     }
     res.status(StatusCodes.OK).send({ ...cityQuery.toObject() });
-  } catch (err) {
+  } catch (err: any) {
+    if (err.code === 11000) {
+      return res.status(StatusCodes.CONFLICT).send(errorObject('Resource already exists', City));
+    }
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal server error', City));
   }
 }

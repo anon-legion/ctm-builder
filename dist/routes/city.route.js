@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const express_validator_1 = require("express-validator");
 const city_controller_1 = require("../controllers/city.controller");
 const bus_route_controller_1 = require("../controllers/bus-route.controller");
+const place_controller_1 = require("../controllers/place.controller");
 // import modelIdValidation from '../middleware/model-id-validation';
 const express_validator_handler_1 = __importDefault(require("../middleware/express-validator-handler"));
 const base_validation_chain_1 = __importDefault(require("./utils/base-validation-chain"));
@@ -26,4 +27,7 @@ router.route('/:id')
 // prettier-ignore
 router.route('/:id/bus-routes')
     .get(bus_route_controller_1.getBusRouteByCityId);
+// prettier-ignore
+router.route('/:id/places')
+    .get(place_controller_1.getPlaceByCityId);
 exports.default = router;

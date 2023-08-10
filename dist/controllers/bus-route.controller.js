@@ -36,6 +36,9 @@ function postBusRoute(req, res) {
             res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, busRouteQuery.toObject()));
         }
         catch (err) {
+            if (err.code === 11000) {
+                return res.status(http_status_codes_1.StatusCodes.CONFLICT).send((0, generic_error_object_1.default)('Resource already exists', Bus_Route_1.default));
+            }
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', Bus_Route_1.default));
         }
     });
@@ -85,6 +88,9 @@ function putBusRouteById(req, res) {
             res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, busRouteQuery.toObject()));
         }
         catch (err) {
+            if (err.code === 11000) {
+                return res.status(http_status_codes_1.StatusCodes.CONFLICT).send((0, generic_error_object_1.default)('Resource already exists', Bus_Route_1.default));
+            }
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', Bus_Route_1.default));
         }
     });

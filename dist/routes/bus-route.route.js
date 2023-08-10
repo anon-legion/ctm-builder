@@ -18,7 +18,6 @@ router.route('/')
     .get(bus_route_controller_1.getBusRoutesAll);
 // prettier-ignore
 router.route('/:id')
-    // .all(modelIdValidation(BusRoute))
     .put((0, base_validation_chain_1.default)('name').isLength({ min: 4, max: 50 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, normalize_str_payload_1.default)(), express_validator_handler_1.default, bus_route_controller_1.putBusRouteById)
     .get(bus_route_controller_1.getBusRouteById)
     .delete(bus_route_controller_1.deleteBusRouteById);

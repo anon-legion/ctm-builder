@@ -72,6 +72,9 @@ function putCityById(req, res) {
             res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, cityQuery.toObject()));
         }
         catch (err) {
+            if (err.code === 11000) {
+                return res.status(http_status_codes_1.StatusCodes.CONFLICT).send((0, generic_error_object_1.default)('Resource already exists', City_1.default));
+            }
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', City_1.default));
         }
     });

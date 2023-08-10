@@ -17,7 +17,10 @@ async function postBusRoute(req: Request, res: Response) {
   try {
     const busRouteQuery = await BusRoute.create({ cityId, name, isActive });
     res.status(StatusCodes.CREATED).send({ ...busRouteQuery.toObject() });
-  } catch (err) {
+  } catch (err: any) {
+    if (err.code === 11000) {
+      return res.status(StatusCodes.CONFLICT).send(errorObject('Resource already exists', BusRoute));
+    }
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal server error', BusRoute));
   }
 }
@@ -59,7 +62,10 @@ async function putBusRouteById(req: Request, res: Response) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Bus route with id "${id} not found`, BusRoute));
     }
     res.status(StatusCodes.OK).send({ ...busRouteQuery.toObject() });
-  } catch (err) {
+  } catch (err: any) {
+    if (err.code === 11000) {
+      return res.status(StatusCodes.CONFLICT).send(errorObject('Resource already exists', BusRoute));
+    }
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal server error', BusRoute));
   }
 }

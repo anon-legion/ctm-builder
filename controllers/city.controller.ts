@@ -28,7 +28,7 @@ async function postCity(req: Request, res: Response) {
 async function getCityById(req: Request, res: Response) {
   const { id } = req.params;
   try {
-    const cityQuery = await City.findById(id).select('__v');
+    const cityQuery = await City.findById(id).select('-__v');
     if (!cityQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`City with id "${id}" not found`, City));
     }

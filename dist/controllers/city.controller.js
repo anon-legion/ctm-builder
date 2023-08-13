@@ -48,7 +48,7 @@ function getCityById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
         try {
-            const cityQuery = yield City_1.default.findById(id).select('__v');
+            const cityQuery = yield City_1.default.findById(id).select('-__v');
             if (!cityQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`City with id "${id}" not found`, City_1.default));
             }

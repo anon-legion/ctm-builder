@@ -13,7 +13,7 @@ router.route('/')
   .post(
     baseStrValidation('name').isLength({ min: 4, max: 50 }).escape(),
     body('isActive').isBoolean({strict: true}),
-    body('aliases').isArray().escape(),
+    body('aliases').isArray().escape().optional(),
     payloadToTitleCase(),
     expressValidatorHandler,
     postPlace,
@@ -25,7 +25,7 @@ router.route('/:id')
   .put(
     baseStrValidation('name').isLength({ min: 4}).escape(),
     body('isActive').isBoolean({strict: true}),
-    body('aliases').isArray().escape(),
+    body('aliases').isArray().escape().optional(),
     payloadToTitleCase(),
     expressValidatorHandler,
     putPlaceById,

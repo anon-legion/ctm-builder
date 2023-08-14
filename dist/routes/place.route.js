@@ -13,11 +13,11 @@ const normalize_str_payload_1 = __importDefault(require("./utils/normalize-str-p
 const router = express_1.default.Router();
 // prettier-ignore
 router.route('/')
-    .post((0, base_validation_chain_1.default)('name').isLength({ min: 4, max: 50 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, express_validator_1.body)('aliases').isArray().escape(), (0, normalize_str_payload_1.default)(), express_validator_handler_1.default, place_controller_1.postPlace)
+    .post((0, base_validation_chain_1.default)('name').isLength({ min: 4, max: 50 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, express_validator_1.body)('aliases').isArray().escape().optional(), (0, normalize_str_payload_1.default)(), express_validator_handler_1.default, place_controller_1.postPlace)
     .get(place_controller_1.getPlacesAll);
 // prettier-ignore
 router.route('/:id')
-    .put((0, base_validation_chain_1.default)('name').isLength({ min: 4 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, express_validator_1.body)('aliases').isArray().escape(), (0, normalize_str_payload_1.default)(), express_validator_handler_1.default, place_controller_1.putPlaceById)
+    .put((0, base_validation_chain_1.default)('name').isLength({ min: 4 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, express_validator_1.body)('aliases').isArray().escape().optional(), (0, normalize_str_payload_1.default)(), express_validator_handler_1.default, place_controller_1.putPlaceById)
     .get(place_controller_1.getPlaceById)
     .delete(place_controller_1.deletePlaceById);
 exports.default = router;

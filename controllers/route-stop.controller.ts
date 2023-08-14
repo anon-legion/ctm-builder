@@ -19,7 +19,16 @@ async function postRouteStop(req: Request, res: Response) {
   const { routeId, placeId, distance, isActive } = req.body;
   try {
     const newRouteStop = await RouteStop.create({ routeId, placeId, distance, isActive });
-    res.status(StatusCodes.CREATED).send({ ...newRouteStop.toObject() });
+    const { _id } = newRouteStop;
+    const routeStopQuery = await RouteStop.findById(_id, ['-__v']).populate({
+      path: 'placeId',
+      select: 'name',
+      populate: { path: 'cityId', select: 'name' },
+    });
+    if (!routeStopQuery) {
+      return res.status(StatusCodes.BAD_REQUEST).send(errorObject('Something went wrong, try again later', RouteStop));
+    }
+    res.status(StatusCodes.CREATED).send({ ...routeStopQuery.toObject() });
   } catch (err: any) {
     if (err instanceof InvalidDocumentIdError) {
       return res.status(err.statusCode).send(errorObject(`${err.message}`, RouteStop));
@@ -31,7 +40,11 @@ async function postRouteStop(req: Request, res: Response) {
 async function getRouteStopById(req: Request, res: Response) {
   const { id } = req.params;
   try {
-    const routeStopQuery = await RouteStop.findById(id, ['-__v']);
+    const routeStopQuery = await RouteStop.findById(id, ['-__v']).populate({
+      path: 'placeId',
+      select: 'name',
+      populate: { path: 'cityId', select: 'name' },
+    });
     if (!routeStopQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Route stop with id "${id}" not found`, RouteStop));
     }

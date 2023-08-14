@@ -14,12 +14,12 @@ const placeSchema = new Schema<IPlace>({
   },
   aliases: {
     type: [String],
-    required: true,
+    required: false,
     default: [],
   },
   isActive: {
     type: Boolean,
-    required: true,
+    required: false,
     default: true,
   },
 });

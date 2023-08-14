@@ -14,12 +14,12 @@ const placeSchema = new mongoose_1.Schema({
     },
     aliases: {
         type: [String],
-        required: true,
+        required: false,
         default: [],
     },
     isActive: {
         type: Boolean,
-        required: true,
+        required: false,
         default: true,
     },
 });

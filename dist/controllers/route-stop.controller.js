@@ -12,14 +12,17 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.putRouteStopById = exports.getRouteStopById = exports.postRouteStop = exports.getRouteStopsAll = void 0;
+exports.deleteRouteStopById = exports.getRouteStopsByRouteId = exports.putRouteStopById = exports.getRouteStopById = exports.postRouteStop = exports.getRouteStopsAll = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const Route_Stop_1 = __importDefault(require("../models/Route-Stop"));
 const generic_error_object_1 = __importDefault(require("./utils/generic-error-object"));
+const errors_1 = require("../errors");
 function getRouteStopsAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const routeStopQuery = yield Route_Stop_1.default.find({}, ['-__v']).sort({ name: 1 });
+            const routeStopQuery = yield Route_Stop_1.default.find({}, ['-__v'])
+                .sort({ name: 1 })
+                .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
             res.status(http_status_codes_1.StatusCodes.OK).send([...routeStopQuery]);
         }
         catch (err) {
@@ -36,8 +39,8 @@ function postRouteStop(req, res) {
             res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, newRouteStop.toObject()));
         }
         catch (err) {
-            if (err.code === 11000) {
-                return res.status(http_status_codes_1.StatusCodes.CONFLICT).send((0, generic_error_object_1.default)('Resource already exists', Route_Stop_1.default));
+            if (err instanceof errors_1.InvalidDocumentIdError) {
+                return res.status(err.statusCode).send((0, generic_error_object_1.default)(`${err.message}`, Route_Stop_1.default));
             }
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', Route_Stop_1.default));
         }
@@ -77,3 +80,37 @@ function putRouteStopById(req, res) {
     });
 }
 exports.putRouteStopById = putRouteStopById;
+function getRouteStopsByRouteId(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { id } = req.params;
+        try {
+            const routeStopQuery = yield Route_Stop_1.default.find({ routeId: id }, ['-__v'])
+                .sort({ distance: 1 })
+                .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
+            if (!routeStopQuery) {
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send([]);
+            }
+            res.status(http_status_codes_1.StatusCodes.OK).send([...routeStopQuery]);
+        }
+        catch (err) {
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send([]);
+        }
+    });
+}
+exports.getRouteStopsByRouteId = getRouteStopsByRouteId;
+function deleteRouteStopById(req, res) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const { id } = req.params;
+        try {
+            const routeStopQuery = yield Route_Stop_1.default.findByIdAndDelete(id).select('-__v');
+            if (!routeStopQuery) {
+                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Route stop with id "${id}" not found`, Route_Stop_1.default));
+            }
+            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, routeStopQuery.toObject()));
+        }
+        catch (err) {
+            res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal Server Error', Route_Stop_1.default));
+        }
+    });
+}
+exports.deleteRouteStopById = deleteRouteStopById;

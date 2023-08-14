@@ -14,5 +14,6 @@ router.route('/')
 // prettier-ignore
 router.route('/:id')
     .get(route_stop_controller_1.getRouteStopById)
-    .put(route_stop_controller_1.putRouteStopById);
+    .put(route_stop_controller_1.putRouteStopById)
+    .delete(route_stop_controller_1.deleteRouteStopById);
 exports.default = router;

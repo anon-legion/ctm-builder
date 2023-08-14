@@ -4,6 +4,7 @@ import {
   postRouteStop,
   getRouteStopById,
   putRouteStopById,
+  deleteRouteStopById,
 } from '../controllers/route-stop.controller';
 
 // initialize express router
@@ -17,6 +18,7 @@ router.route('/')
 // prettier-ignore
 router.route('/:id')
   .get(getRouteStopById)
-  .put(putRouteStopById);
+  .put(putRouteStopById)
+  .delete(deleteRouteStopById)
 
 export default router;

@@ -1,5 +1,8 @@
-import { Schema, model, Document, Error as MongooseError } from 'mongoose';
+import { Schema, model } from 'mongoose';
+import BusRoute from './Bus-Route';
+import Place from './Place';
 import { IRouteStop } from './types';
+import { InvalidDocumentIdError } from '../errors';
 
 const routeStopSchema = new Schema<IRouteStop>({
   routeId: {
@@ -22,6 +25,21 @@ const routeStopSchema = new Schema<IRouteStop>({
     required: true,
     default: true,
   },
+});
+
+// add model pre hook to check if routeId and placeId are valid
+routeStopSchema.pre<IRouteStop>('save', async function (next) {
+  try {
+    const [busRoute, place] = await Promise.all([BusRoute.findById(this.routeId), Place.findById(this.placeId)]);
+
+    if (!busRoute || !place) {
+      throw new InvalidDocumentIdError('Invalid routeId or placeId');
+    }
+
+    next();
+  } catch (err: any) {
+    next(err);
+  }
 });
 
 const RouteStop = model<IRouteStop>('Route-Stop', routeStopSchema);

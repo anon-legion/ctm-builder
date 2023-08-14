@@ -11,6 +11,7 @@ import expressValidatorHandler from '../middleware/express-validator-handler';
 // import modelIdValidation from '../middleware/model-id-validation';
 import baseStrValidation from './utils/base-validation-chain';
 import payloadToTitleCase from './utils/normalize-str-payload';
+import { getRouteStopsByRouteId } from '../controllers/route-stop.controller';
 
 // initialize express router
 const router = express.Router();
@@ -37,5 +38,9 @@ router.route('/:id')
   )
   .get(getBusRouteById)
   .delete(deleteBusRouteById)
+
+// prettier-ignore
+router.route('/:id/stops')
+    .get(getRouteStopsByRouteId)
 
 export default router;

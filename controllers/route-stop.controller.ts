@@ -2,10 +2,13 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import RouteStop from '../models/Route-Stop';
 import errorObject from './utils/generic-error-object';
+import { InvalidDocumentIdError } from '../errors';
 
 async function getRouteStopsAll(_: Request, res: Response) {
   try {
-    const routeStopQuery = await RouteStop.find({}, ['-__v']).sort({ name: 1 });
+    const routeStopQuery = await RouteStop.find({}, ['-__v'])
+      .sort({ name: 1 })
+      .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
     res.status(StatusCodes.OK).send([...routeStopQuery]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send([]);
@@ -18,8 +21,8 @@ async function postRouteStop(req: Request, res: Response) {
     const newRouteStop = await RouteStop.create({ routeId, placeId, distance, isActive });
     res.status(StatusCodes.CREATED).send({ ...newRouteStop.toObject() });
   } catch (err: any) {
-    if (err.code === 11000) {
-      return res.status(StatusCodes.CONFLICT).send(errorObject('Resource already exists', RouteStop));
+    if (err instanceof InvalidDocumentIdError) {
+      return res.status(err.statusCode).send(errorObject(`${err.message}`, RouteStop));
     }
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal server error', RouteStop));
   }
@@ -56,4 +59,39 @@ async function putRouteStopById(req: Request, res: Response) {
   }
 }
 
-export { getRouteStopsAll, postRouteStop, getRouteStopById, putRouteStopById };
+async function getRouteStopsByRouteId(req: Request, res: Response) {
+  const { id } = req.params;
+  try {
+    const routeStopQuery = await RouteStop.find({ routeId: id }, ['-__v'])
+      .sort({ distance: 1 })
+      .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
+    if (!routeStopQuery) {
+      return res.status(StatusCodes.NOT_FOUND).send([]);
+    }
+    res.status(StatusCodes.OK).send([...routeStopQuery]);
+  } catch (err) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send([]);
+  }
+}
+
+async function deleteRouteStopById(req: Request, res: Response) {
+  const { id } = req.params;
+  try {
+    const routeStopQuery = await RouteStop.findByIdAndDelete(id).select('-__v');
+    if (!routeStopQuery) {
+      return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Route stop with id "${id}" not found`, RouteStop));
+    }
+    res.status(StatusCodes.OK).send({ ...routeStopQuery.toObject() });
+  } catch (err) {
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal Server Error', RouteStop));
+  }
+}
+
+export {
+  getRouteStopsAll,
+  postRouteStop,
+  getRouteStopById,
+  putRouteStopById,
+  getRouteStopsByRouteId,
+  deleteRouteStopById,
+};

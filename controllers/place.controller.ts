@@ -74,9 +74,6 @@ async function getPlaceByCityId(req: Request, res: Response) {
   const { id: cityId } = req.params;
   try {
     const placeQuery = await Place.find({ cityId }).select('-__v').sort({ name: 1 }).populate('cityId', 'name');
-    if (!placeQuery.length) {
-      return res.status(StatusCodes.NOT_FOUND).send([]);
-    }
     res.status(StatusCodes.OK).send([...placeQuery]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send([]);

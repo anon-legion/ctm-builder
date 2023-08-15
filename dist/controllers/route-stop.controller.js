@@ -81,7 +81,9 @@ function putRouteStopById(req, res) {
         const { id } = req.params;
         const { routeId, placeId, distance, isActive } = req.body;
         try {
-            const routeStopQuery = yield Route_Stop_1.default.findByIdAndUpdate(id, { routeId, placeId, distance, isActive }, { new: true }).select('-__v');
+            const routeStopQuery = yield Route_Stop_1.default.findByIdAndUpdate(id, { routeId, placeId, distance, isActive }, { new: true })
+                .select('-__v')
+                .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
             if (!routeStopQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Route stop with id "${id}" not found`, Route_Stop_1.default));
             }
@@ -100,9 +102,6 @@ function getRouteStopsByRouteId(req, res) {
             const routeStopQuery = yield Route_Stop_1.default.find({ routeId: id }, ['-__v'])
                 .sort({ distance: 1 })
                 .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
-            if (!routeStopQuery) {
-                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send([]);
-            }
             res.status(http_status_codes_1.StatusCodes.OK).send([...routeStopQuery]);
         }
         catch (err) {
@@ -115,7 +114,9 @@ function deleteRouteStopById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
         try {
-            const routeStopQuery = yield Route_Stop_1.default.findByIdAndDelete(id).select('-__v');
+            const routeStopQuery = yield Route_Stop_1.default.findByIdAndDelete(id)
+                .select('-__v')
+                .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
             if (!routeStopQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Route stop with id "${id}" not found`, Route_Stop_1.default));
             }

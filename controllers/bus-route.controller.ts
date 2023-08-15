@@ -42,9 +42,6 @@ async function getBusRouteByCityId(req: Request, res: Response) {
   const { id: cityId } = req.params;
   try {
     const busRouteQuery = await BusRoute.find({ cityId }, ['-__v']).sort({ name: 1 });
-    if (!busRouteQuery.length) {
-      return res.status(StatusCodes.NOT_FOUND).send([]);
-    }
     res.status(StatusCodes.OK).send([...busRouteQuery]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send([]);

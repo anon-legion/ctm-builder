@@ -65,9 +65,6 @@ function getBusRouteByCityId(req, res) {
         const { id: cityId } = req.params;
         try {
             const busRouteQuery = yield Bus_Route_1.default.find({ cityId }, ['-__v']).sort({ name: 1 });
-            if (!busRouteQuery.length) {
-                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send([]);
-            }
             res.status(http_status_codes_1.StatusCodes.OK).send([...busRouteQuery]);
         }
         catch (err) {

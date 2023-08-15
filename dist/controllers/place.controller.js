@@ -103,9 +103,6 @@ function getPlaceByCityId(req, res) {
         const { id: cityId } = req.params;
         try {
             const placeQuery = yield Place_1.default.find({ cityId }).select('-__v').sort({ name: 1 }).populate('cityId', 'name');
-            if (!placeQuery.length) {
-                return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send([]);
-            }
             res.status(http_status_codes_1.StatusCodes.OK).send([...placeQuery]);
         }
         catch (err) {

@@ -62,7 +62,9 @@ async function putRouteStopById(req: Request, res: Response) {
       id,
       { routeId, placeId, distance, isActive },
       { new: true }
-    ).select('-__v');
+    )
+      .select('-__v')
+      .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
     if (!routeStopQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Route stop with id "${id}" not found`, RouteStop));
     }
@@ -78,9 +80,6 @@ async function getRouteStopsByRouteId(req: Request, res: Response) {
     const routeStopQuery = await RouteStop.find({ routeId: id }, ['-__v'])
       .sort({ distance: 1 })
       .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
-    if (!routeStopQuery) {
-      return res.status(StatusCodes.NOT_FOUND).send([]);
-    }
     res.status(StatusCodes.OK).send([...routeStopQuery]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send([]);
@@ -90,7 +89,9 @@ async function getRouteStopsByRouteId(req: Request, res: Response) {
 async function deleteRouteStopById(req: Request, res: Response) {
   const { id } = req.params;
   try {
-    const routeStopQuery = await RouteStop.findByIdAndDelete(id).select('-__v');
+    const routeStopQuery = await RouteStop.findByIdAndDelete(id)
+      .select('-__v')
+      .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
     if (!routeStopQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Route stop with id "${id}" not found`, RouteStop));
     }

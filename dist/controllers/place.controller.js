@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getPlaceByCityId = exports.deletePlaceById = exports.putPlaceById = exports.getPlaceById = exports.postPlace = exports.getPlacesAll = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const Place_1 = __importDefault(require("../models/Place"));
+const Route_Stop_1 = __importDefault(require("../models/Route-Stop"));
 const generic_error_object_1 = __importDefault(require("./utils/generic-error-object"));
 function getPlacesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -86,11 +87,14 @@ function deletePlaceById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
         try {
-            const placeQuery = yield Place_1.default.findByIdAndDelete(id).select('-__v');
+            const [placeQuery, routeStopQuery] = yield Promise.all([
+                Place_1.default.findByIdAndDelete(id).select('-__v'),
+                (yield Route_Stop_1.default.deleteMany({ placeId: id })).deletedCount,
+            ]);
             if (!placeQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Place with id "${id}" not found`, Place_1.default));
             }
-            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, placeQuery.toObject()));
+            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign(Object.assign({}, placeQuery.toObject()), { deletedRouteStops: routeStopQuery }));
         }
         catch (err) {
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', Place_1.default));

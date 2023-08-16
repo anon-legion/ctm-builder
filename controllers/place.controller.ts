@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import Place from '../models/Place';
+import RouteStop from '../models/Route-Stop';
 import errorObject from './utils/generic-error-object';
 
 async function getPlacesAll(_: Request, res: Response) {
@@ -60,11 +61,14 @@ async function putPlaceById(req: Request, res: Response) {
 async function deletePlaceById(req: Request, res: Response) {
   const { id } = req.params;
   try {
-    const placeQuery = await Place.findByIdAndDelete(id).select('-__v');
+    const [placeQuery, routeStopQuery] = await Promise.all([
+      Place.findByIdAndDelete(id).select('-__v'),
+      (await RouteStop.deleteMany({ placeId: id })).deletedCount,
+    ]);
     if (!placeQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Place with id "${id}" not found`, Place));
     }
-    res.status(StatusCodes.OK).send({ ...placeQuery.toObject() });
+    res.status(StatusCodes.OK).send({ ...placeQuery.toObject(), deletedRouteStops: routeStopQuery });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal server error', Place));
   }

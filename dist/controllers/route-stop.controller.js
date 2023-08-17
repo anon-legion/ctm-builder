@@ -76,6 +76,7 @@ function getRouteStopById(req, res) {
     });
 }
 exports.getRouteStopById = getRouteStopById;
+// validate update if routeId.cityId._id === placeId.cityId._id
 function putRouteStopById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
@@ -114,9 +115,10 @@ function deleteRouteStopById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
         try {
-            const routeStopQuery = yield Route_Stop_1.default.findByIdAndDelete(id)
-                .select('-__v')
-                .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
+            // const routeStopQuery = await RouteStop.findByIdAndDelete(id)
+            //   .select('-__v')
+            //   .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
+            const routeStopQuery = yield Route_Stop_1.default.findByIdAndUpdate(id, { isActive: false }, { returnDocument: 'after' }).select('-__v');
             if (!routeStopQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Route stop with id "${id}" not found`, Route_Stop_1.default));
             }

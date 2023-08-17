@@ -88,13 +88,13 @@ function deletePlaceById(req, res) {
         const { id } = req.params;
         try {
             const [placeQuery, routeStopQuery] = yield Promise.all([
-                Place_1.default.findByIdAndDelete(id).select('-__v'),
-                (yield Route_Stop_1.default.deleteMany({ placeId: id })).deletedCount,
+                Place_1.default.findByIdAndUpdate(id, { isActive: false }, { returnDocument: 'after' }).select('-__v'),
+                Route_Stop_1.default.updateMany({ placeId: id }, { isActive: false }),
             ]);
             if (!placeQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Place with id "${id}" not found`, Place_1.default));
             }
-            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign(Object.assign({}, placeQuery.toObject()), { deletedRouteStops: routeStopQuery }));
+            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign(Object.assign({}, placeQuery.toObject()), { affectedRoueStops: routeStopQuery.modifiedCount }));
         }
         catch (err) {
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', Place_1.default));

@@ -15,6 +15,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteBusRouteById = exports.putBusRouteById = exports.getBusRoutesByCityId = exports.getBusRouteById = exports.postBusRoute = exports.getBusRoutesAll = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const Bus_Route_1 = __importDefault(require("../models/Bus-Route"));
+const Route_Stop_1 = __importDefault(require("../models/Route-Stop"));
 const generic_error_object_1 = __importDefault(require("./utils/generic-error-object"));
 function getBusRoutesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -97,11 +98,15 @@ function deleteBusRouteById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
         try {
-            const busRouteQuery = yield Bus_Route_1.default.findByIdAndDelete(id).select('-__v');
+            // const busRouteQuery = await BusRoute.findByIdAndDelete(id).select('-__v');
+            const [busRouteQuery, routeStopQuery] = yield Promise.all([
+                Bus_Route_1.default.findByIdAndUpdate(id, { isActive: false }, { returnDocument: 'after' }).select('-__v'),
+                Route_Stop_1.default.updateMany({ routeId: id }, { isActive: false }),
+            ]);
             if (!busRouteQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Bus route with id "${id}" not found`, Bus_Route_1.default));
             }
-            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, busRouteQuery.toObject()));
+            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign(Object.assign({}, busRouteQuery.toObject()), { affectedRoueStops: routeStopQuery.modifiedCount }));
         }
         catch (err) {
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', Bus_Route_1.default));

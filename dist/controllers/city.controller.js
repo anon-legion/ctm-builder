@@ -15,6 +15,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.deleteCityById = exports.putCityById = exports.getCityById = exports.postCity = exports.getCitiesAll = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const City_1 = __importDefault(require("../models/City"));
+const Bus_Route_1 = __importDefault(require("../models/Bus-Route"));
+const Place_1 = __importDefault(require("../models/Place"));
+const Route_Stop_1 = __importDefault(require("../models/Route-Stop"));
 const generic_error_object_1 = __importDefault(require("./utils/generic-error-object"));
 function getCitiesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -84,11 +87,26 @@ function deleteCityById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
         try {
-            const cityQuery = yield City_1.default.findByIdAndDelete(id).select('-__v');
+            // const cityQuery = await City.findByIdAndDelete(id).select('-__v');
+            const [cityQuery, busRouteIds, placeIds] = yield Promise.all([
+                City_1.default.findByIdAndUpdate(id, { isActive: false }, { returnDocument: 'after' }).select('-__v'),
+                Bus_Route_1.default.find({ cityId: id }).select('_id'),
+                Place_1.default.find({ cityId: id }).select('_id'),
+            ]);
             if (!cityQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`City with id "${id}" not found`, City_1.default));
             }
-            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, cityQuery.toObject()));
+            const [busRouteQuery, placeQuery, routeStopQuery] = yield Promise.all([
+                Bus_Route_1.default.updateMany({ cityId: id }, { isActive: false }),
+                Place_1.default.updateMany({ cityId: id }, { isActive: false }),
+                Route_Stop_1.default.updateMany({
+                    $or: [
+                        { busRouteId: { $in: [...busRouteIds.map((busRoute) => busRoute._id)] } },
+                        { placeId: { $in: [...placeIds.map((place) => place._id)] } },
+                    ],
+                }, { $set: { isActive: false } }),
+            ]);
+            res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign(Object.assign({}, cityQuery.toObject()), { affectedBusRoutes: busRouteQuery.modifiedCount, affectedPlaces: placeQuery.modifiedCount, affectedRouteStops: routeStopQuery.modifiedCount }));
         }
         catch (err) {
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', City_1.default));

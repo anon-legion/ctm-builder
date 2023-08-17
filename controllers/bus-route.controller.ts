@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import BusRoute from '../models/Bus-Route';
+import RouteStop from '../models/Route-Stop';
 import errorObject from './utils/generic-error-object';
 
 async function getBusRoutesAll(_: Request, res: Response) {
@@ -70,11 +71,15 @@ async function putBusRouteById(req: Request, res: Response) {
 async function deleteBusRouteById(req: Request, res: Response) {
   const { id } = req.params;
   try {
-    const busRouteQuery = await BusRoute.findByIdAndDelete(id).select('-__v');
+    // const busRouteQuery = await BusRoute.findByIdAndDelete(id).select('-__v');
+    const [busRouteQuery, routeStopQuery] = await Promise.all([
+      BusRoute.findByIdAndUpdate(id, { isActive: false }, { returnDocument: 'after' }).select('-__v'),
+      RouteStop.updateMany({ routeId: id }, { isActive: false }),
+    ]);
     if (!busRouteQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Bus route with id "${id}" not found`, BusRoute));
     }
-    res.status(StatusCodes.OK).send({ ...busRouteQuery.toObject() });
+    res.status(StatusCodes.OK).send({ ...busRouteQuery.toObject(), affectedRoueStops: routeStopQuery.modifiedCount });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal server error', BusRoute));
   }

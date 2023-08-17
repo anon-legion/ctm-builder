@@ -62,13 +62,13 @@ async function deletePlaceById(req: Request, res: Response) {
   const { id } = req.params;
   try {
     const [placeQuery, routeStopQuery] = await Promise.all([
-      Place.findByIdAndDelete(id).select('-__v'),
-      (await RouteStop.deleteMany({ placeId: id })).deletedCount,
+      Place.findByIdAndUpdate(id, { isActive: false }, { returnDocument: 'after' }).select('-__v'),
+      RouteStop.updateMany({ placeId: id }, { isActive: false }),
     ]);
     if (!placeQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Place with id "${id}" not found`, Place));
     }
-    res.status(StatusCodes.OK).send({ ...placeQuery.toObject(), deletedRouteStops: routeStopQuery });
+    res.status(StatusCodes.OK).send({ ...placeQuery.toObject(), affectedRoueStops: routeStopQuery.modifiedCount });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal server error', Place));
   }

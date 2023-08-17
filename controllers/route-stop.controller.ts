@@ -61,7 +61,6 @@ async function getRouteStopById(req: Request, res: Response) {
   }
 }
 
-// validate update if routeId.cityId._id === placeId.cityId._id
 async function putRouteStopById(req: Request, res: Response) {
   const { id } = req.params;
   const { routeId, placeId, distance, isActive } = req.body;

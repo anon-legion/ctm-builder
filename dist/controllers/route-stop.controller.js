@@ -76,7 +76,6 @@ function getRouteStopById(req, res) {
     });
 }
 exports.getRouteStopById = getRouteStopById;
-// validate update if routeId.cityId._id === placeId.cityId._id
 function putRouteStopById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;

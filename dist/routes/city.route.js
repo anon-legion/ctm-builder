@@ -26,8 +26,8 @@ router.route('/:id')
     .delete(city_controller_1.deleteCityById);
 // prettier-ignore
 router.route('/:id/bus-routes')
-    .get(bus_route_controller_1.getBusRouteByCityId);
+    .get(bus_route_controller_1.getBusRoutesByCityId);
 // prettier-ignore
 router.route('/:id/places')
-    .get(place_controller_1.getPlaceByCityId);
+    .get(place_controller_1.getPlacesByCityId);
 exports.default = router;

@@ -12,14 +12,14 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.deleteBusRouteById = exports.putBusRouteById = exports.getBusRouteByCityId = exports.getBusRouteById = exports.postBusRoute = exports.getBusRoutesAll = void 0;
+exports.deleteBusRouteById = exports.putBusRouteById = exports.getBusRoutesByCityId = exports.getBusRouteById = exports.postBusRoute = exports.getBusRoutesAll = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const Bus_Route_1 = __importDefault(require("../models/Bus-Route"));
 const generic_error_object_1 = __importDefault(require("./utils/generic-error-object"));
 function getBusRoutesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const busRouteQuery = yield Bus_Route_1.default.find({}, ['-__v']).sort({ name: 1 });
+            const busRouteQuery = yield Bus_Route_1.default.find({ isActive: true }, ['-__v']).sort({ name: 1 });
             res.status(http_status_codes_1.StatusCodes.OK).send([...busRouteQuery]);
         }
         catch (err) {
@@ -60,11 +60,11 @@ function getBusRouteById(req, res) {
     });
 }
 exports.getBusRouteById = getBusRouteById;
-function getBusRouteByCityId(req, res) {
+function getBusRoutesByCityId(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id: cityId } = req.params;
         try {
-            const busRouteQuery = yield Bus_Route_1.default.find({ cityId }, ['-__v']).sort({ name: 1 });
+            const busRouteQuery = yield Bus_Route_1.default.find({ cityId, isActive: true }, ['-__v']).sort({ name: 1 });
             res.status(http_status_codes_1.StatusCodes.OK).send([...busRouteQuery]);
         }
         catch (err) {
@@ -72,7 +72,7 @@ function getBusRouteByCityId(req, res) {
         }
     });
 }
-exports.getBusRouteByCityId = getBusRouteByCityId;
+exports.getBusRoutesByCityId = getBusRoutesByCityId;
 function putBusRouteById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;

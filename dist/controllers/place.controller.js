@@ -12,7 +12,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getPlaceByCityId = exports.deletePlaceById = exports.putPlaceById = exports.getPlaceById = exports.postPlace = exports.getPlacesAll = void 0;
+exports.getPlacesByCityId = exports.deletePlaceById = exports.putPlaceById = exports.getPlaceById = exports.postPlace = exports.getPlacesAll = void 0;
 const http_status_codes_1 = require("http-status-codes");
 const Place_1 = __importDefault(require("../models/Place"));
 const Route_Stop_1 = __importDefault(require("../models/Route-Stop"));
@@ -20,7 +20,7 @@ const generic_error_object_1 = __importDefault(require("./utils/generic-error-ob
 function getPlacesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const placeQuery = yield Place_1.default.find({}, ['-__v']).sort({ name: 1 }).populate('cityId', 'name');
+            const placeQuery = yield Place_1.default.find({ isActive: true }, ['-__v']).sort({ name: 1 }).populate('cityId', 'name');
             res.status(http_status_codes_1.StatusCodes.OK).send([...placeQuery]);
         }
         catch (err) {
@@ -102,11 +102,14 @@ function deletePlaceById(req, res) {
     });
 }
 exports.deletePlaceById = deletePlaceById;
-function getPlaceByCityId(req, res) {
+function getPlacesByCityId(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id: cityId } = req.params;
         try {
-            const placeQuery = yield Place_1.default.find({ cityId }).select('-__v').sort({ name: 1 }).populate('cityId', 'name');
+            const placeQuery = yield Place_1.default.find({ cityId, isActive: true })
+                .select('-__v')
+                .sort({ name: 1 })
+                .populate('cityId', 'name');
             res.status(http_status_codes_1.StatusCodes.OK).send([...placeQuery]);
         }
         catch (err) {
@@ -114,4 +117,4 @@ function getPlaceByCityId(req, res) {
         }
     });
 }
-exports.getPlaceByCityId = getPlaceByCityId;
+exports.getPlacesByCityId = getPlacesByCityId;

@@ -5,7 +5,7 @@ import errorObject from './utils/generic-error-object';
 
 async function getCitiesAll(_: Request, res: Response) {
   try {
-    const cityQuery = await City.find({}, ['-__v']).sort({ name: 1 });
+    const cityQuery = await City.find({ isActive: true }, ['-__v']).sort({ name: 1 });
     res.status(StatusCodes.OK).send([...cityQuery]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send([]);

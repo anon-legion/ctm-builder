@@ -5,7 +5,7 @@ import errorObject from './utils/generic-error-object';
 
 async function getBusRoutesAll(_: Request, res: Response) {
   try {
-    const busRouteQuery = await BusRoute.find({}, ['-__v']).sort({ name: 1 });
+    const busRouteQuery = await BusRoute.find({ isActive: true }, ['-__v']).sort({ name: 1 });
     res.status(StatusCodes.OK).send([...busRouteQuery]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send([]);
@@ -38,10 +38,10 @@ async function getBusRouteById(req: Request, res: Response) {
   }
 }
 
-async function getBusRouteByCityId(req: Request, res: Response) {
+async function getBusRoutesByCityId(req: Request, res: Response) {
   const { id: cityId } = req.params;
   try {
-    const busRouteQuery = await BusRoute.find({ cityId }, ['-__v']).sort({ name: 1 });
+    const busRouteQuery = await BusRoute.find({ cityId, isActive: true }, ['-__v']).sort({ name: 1 });
     res.status(StatusCodes.OK).send([...busRouteQuery]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send([]);
@@ -80,4 +80,4 @@ async function deleteBusRouteById(req: Request, res: Response) {
   }
 }
 
-export { getBusRoutesAll, postBusRoute, getBusRouteById, getBusRouteByCityId, putBusRouteById, deleteBusRouteById };
+export { getBusRoutesAll, postBusRoute, getBusRouteById, getBusRoutesByCityId, putBusRouteById, deleteBusRouteById };

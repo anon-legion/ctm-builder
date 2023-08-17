@@ -1,8 +1,8 @@
 import express from 'express';
 import { body } from 'express-validator';
 import { postCity, getCitiesAll, getCityById, putCityById, deleteCityById } from '../controllers/city.controller';
-import { getBusRouteByCityId } from '../controllers/bus-route.controller';
-import { getPlaceByCityId } from '../controllers/place.controller';
+import { getBusRoutesByCityId } from '../controllers/bus-route.controller';
+import { getPlacesByCityId } from '../controllers/place.controller';
 // import modelIdValidation from '../middleware/model-id-validation';
 import expressValidatorHandler from '../middleware/express-validator-handler';
 import baseStrValidation from './utils/base-validation-chain';
@@ -37,10 +37,10 @@ router.route('/:id')
 
 // prettier-ignore
 router.route('/:id/bus-routes')
-  .get(getBusRouteByCityId)
+  .get(getBusRoutesByCityId)
 
 // prettier-ignore
 router.route('/:id/places')
-  .get(getPlaceByCityId)
+  .get(getPlacesByCityId)
 
 export default router;

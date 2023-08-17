@@ -10,7 +10,6 @@ const placeSchema = new Schema<IPlace>({
   name: {
     type: String,
     required: true,
-    unique: true,
   },
   aliases: {
     type: [String],

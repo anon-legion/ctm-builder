@@ -6,7 +6,7 @@ import { InvalidDocumentIdError } from '../errors';
 
 async function getRouteStopsAll(_: Request, res: Response) {
   try {
-    const routeStopQuery = await RouteStop.find({}, ['-__v'])
+    const routeStopQuery = await RouteStop.find({ isActive: true }, ['-__v'])
       .sort({ name: 1 })
       .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
     res.status(StatusCodes.OK).send([...routeStopQuery]);
@@ -77,7 +77,7 @@ async function putRouteStopById(req: Request, res: Response) {
 async function getRouteStopsByRouteId(req: Request, res: Response) {
   const { id } = req.params;
   try {
-    const routeStopQuery = await RouteStop.find({ routeId: id }, ['-__v'])
+    const routeStopQuery = await RouteStop.find({ routeId: id, isActive: true }, ['-__v'])
       .sort({ distance: 1 })
       .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
     res.status(StatusCodes.OK).send([...routeStopQuery]);

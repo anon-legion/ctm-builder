@@ -10,7 +10,6 @@ const placeSchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: true,
-        unique: true,
     },
     aliases: {
         type: [String],

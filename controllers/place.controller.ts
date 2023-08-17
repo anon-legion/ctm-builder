@@ -6,7 +6,7 @@ import errorObject from './utils/generic-error-object';
 
 async function getPlacesAll(_: Request, res: Response) {
   try {
-    const placeQuery = await Place.find({}, ['-__v']).sort({ name: 1 }).populate('cityId', 'name');
+    const placeQuery = await Place.find({ isActive: true }, ['-__v']).sort({ name: 1 }).populate('cityId', 'name');
     res.status(StatusCodes.OK).send([...placeQuery]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send([]);
@@ -74,14 +74,17 @@ async function deletePlaceById(req: Request, res: Response) {
   }
 }
 
-async function getPlaceByCityId(req: Request, res: Response) {
+async function getPlacesByCityId(req: Request, res: Response) {
   const { id: cityId } = req.params;
   try {
-    const placeQuery = await Place.find({ cityId }).select('-__v').sort({ name: 1 }).populate('cityId', 'name');
+    const placeQuery = await Place.find({ cityId, isActive: true })
+      .select('-__v')
+      .sort({ name: 1 })
+      .populate('cityId', 'name');
     res.status(StatusCodes.OK).send([...placeQuery]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send([]);
   }
 }
 
-export { getPlacesAll, postPlace, getPlaceById, putPlaceById, deletePlaceById, getPlaceByCityId };
+export { getPlacesAll, postPlace, getPlaceById, putPlaceById, deletePlaceById, getPlacesByCityId };

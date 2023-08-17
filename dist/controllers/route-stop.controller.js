@@ -20,7 +20,7 @@ const errors_1 = require("../errors");
 function getRouteStopsAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const routeStopQuery = yield Route_Stop_1.default.find({}, ['-__v'])
+            const routeStopQuery = yield Route_Stop_1.default.find({ isActive: true }, ['-__v'])
                 .sort({ name: 1 })
                 .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
             res.status(http_status_codes_1.StatusCodes.OK).send([...routeStopQuery]);
@@ -99,7 +99,7 @@ function getRouteStopsByRouteId(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
         try {
-            const routeStopQuery = yield Route_Stop_1.default.find({ routeId: id }, ['-__v'])
+            const routeStopQuery = yield Route_Stop_1.default.find({ routeId: id, isActive: true }, ['-__v'])
                 .sort({ distance: 1 })
                 .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
             res.status(http_status_codes_1.StatusCodes.OK).send([...routeStopQuery]);

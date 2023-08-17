@@ -19,7 +19,7 @@ const errorHandlerMiddleware = (err, _, res, next) => {
         errObj.errors = err.validationErrors;
         customError.statusCode = err.statusCode;
     }
-    if (err instanceof index_js_1.InvalidDocumentIdError) {
+    if (err instanceof index_js_1.InvalidIdError) {
         customError.statusCode = err.statusCode;
         errObj.message = err.message;
     }

@@ -2,7 +2,7 @@ import { Schema, model } from 'mongoose';
 import BusRoute from './Bus-Route';
 import Place from './Place';
 import { IRouteStop } from './types';
-import { InvalidDocumentIdError } from '../errors';
+import { InvalidIdError } from '../errors';
 
 const routeStopSchema = new Schema<IRouteStop>({
   routeId: {
@@ -28,12 +28,17 @@ const routeStopSchema = new Schema<IRouteStop>({
 });
 
 // add model pre hook to check if routeId and placeId are valid
+// also check if routeId.cityId === placeId.cityId
 routeStopSchema.pre<IRouteStop>('save', async function (next) {
   try {
     const [busRoute, place] = await Promise.all([BusRoute.findById(this.routeId), Place.findById(this.placeId)]);
 
     if (!busRoute || !place) {
-      throw new InvalidDocumentIdError('Invalid routeId or placeId');
+      throw new InvalidIdError('Invalid routeId or placeId');
+    }
+
+    if (busRoute.cityId.toString() !== place.cityId.toString()) {
+      throw new InvalidIdError('BusRoute and Place cityId conflict');
     }
 
     next();

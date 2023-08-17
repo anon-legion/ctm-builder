@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { StatusCodes } from 'http-status-codes';
 import RouteStop from '../models/Route-Stop';
 import errorObject from './utils/generic-error-object';
-import { InvalidDocumentIdError } from '../errors';
+import { InvalidIdError } from '../errors';
 
 async function getRouteStopsAll(_: Request, res: Response) {
   try {
@@ -17,6 +17,7 @@ async function getRouteStopsAll(_: Request, res: Response) {
 
 async function postRouteStop(req: Request, res: Response) {
   const { routeId, placeId, distance, isActive } = req.body;
+
   try {
     const newRouteStop = await RouteStop.create({ routeId, placeId, distance, isActive });
     const { _id } = newRouteStop;
@@ -25,29 +26,35 @@ async function postRouteStop(req: Request, res: Response) {
       select: 'name',
       populate: { path: 'cityId', select: 'name' },
     });
+
     if (!routeStopQuery) {
       return res.status(StatusCodes.BAD_REQUEST).send(errorObject('Something went wrong, try again later', RouteStop));
     }
+
     res.status(StatusCodes.CREATED).send({ ...routeStopQuery.toObject() });
   } catch (err: any) {
-    if (err instanceof InvalidDocumentIdError) {
+    if (err instanceof InvalidIdError) {
       return res.status(err.statusCode).send(errorObject(`${err.message}`, RouteStop));
     }
+
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal server error', RouteStop));
   }
 }
 
 async function getRouteStopById(req: Request, res: Response) {
   const { id } = req.params;
+
   try {
     const routeStopQuery = await RouteStop.findById(id, ['-__v']).populate({
       path: 'placeId',
       select: 'name',
       populate: { path: 'cityId', select: 'name' },
     });
+
     if (!routeStopQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Route stop with id "${id}" not found`, RouteStop));
     }
+
     res.status(StatusCodes.OK).send({ ...routeStopQuery.toObject() });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal Server Error', RouteStop));
@@ -58,6 +65,7 @@ async function getRouteStopById(req: Request, res: Response) {
 async function putRouteStopById(req: Request, res: Response) {
   const { id } = req.params;
   const { routeId, placeId, distance, isActive } = req.body;
+
   try {
     const routeStopQuery = await RouteStop.findByIdAndUpdate(
       id,
@@ -66,9 +74,11 @@ async function putRouteStopById(req: Request, res: Response) {
     )
       .select('-__v')
       .populate({ path: 'placeId', select: 'name', populate: { path: 'cityId', select: 'name' } });
+
     if (!routeStopQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Route stop with id "${id}" not found`, RouteStop));
     }
+
     res.status(StatusCodes.OK).send({ ...routeStopQuery.toObject() });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal Server Error', RouteStop));
@@ -77,6 +87,7 @@ async function putRouteStopById(req: Request, res: Response) {
 
 async function getRouteStopsByRouteId(req: Request, res: Response) {
   const { id } = req.params;
+
   try {
     const routeStopQuery = await RouteStop.find({ routeId: id, isActive: true }, ['-__v'])
       .sort({ distance: 1 })
@@ -89,6 +100,7 @@ async function getRouteStopsByRouteId(req: Request, res: Response) {
 
 async function deleteRouteStopById(req: Request, res: Response) {
   const { id } = req.params;
+
   try {
     // const routeStopQuery = await RouteStop.findByIdAndDelete(id)
     //   .select('-__v')
@@ -98,9 +110,11 @@ async function deleteRouteStopById(req: Request, res: Response) {
       { isActive: false },
       { returnDocument: 'after' }
     ).select('-__v');
+
     if (!routeStopQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Route stop with id "${id}" not found`, RouteStop));
     }
+
     res.status(StatusCodes.OK).send({ ...routeStopQuery.toObject() });
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal Server Error', RouteStop));

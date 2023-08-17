@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import { StatusCodes } from 'http-status-codes';
-import { InvalidPayloadError, InvalidDocumentIdError } from '../errors/index.js';
+import { InvalidPayloadError, InvalidIdError } from '../errors/index.js';
 
 interface CustomError {
   statusCode: number;
@@ -32,7 +32,7 @@ const errorHandlerMiddleware = (err: Error, _: Request, res: Response, next: Nex
     customError.statusCode = err.statusCode;
   }
 
-  if (err instanceof InvalidDocumentIdError) {
+  if (err instanceof InvalidIdError) {
     customError.statusCode = err.statusCode;
     errObj.message = err.message;
   }

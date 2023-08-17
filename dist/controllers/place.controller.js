@@ -72,6 +72,9 @@ function putPlaceById(req, res) {
             if (!placeQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Place with id "${id}" not found`, Place_1.default));
             }
+            if (!isActive) {
+                yield Route_Stop_1.default.updateMany({ placeId: id }, { isActive: false });
+            }
             res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, placeQuery.toObject()));
         }
         catch (err) {

@@ -83,6 +83,9 @@ function putBusRouteById(req, res) {
             if (!busRouteQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Bus route with id "${id} not found`, Bus_Route_1.default));
             }
+            if (!isActive) {
+                yield Route_Stop_1.default.updateMany({ routeId: id }, { isActive: false });
+            }
             res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, busRouteQuery.toObject()));
         }
         catch (err) {

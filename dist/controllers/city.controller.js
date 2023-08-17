@@ -72,6 +72,22 @@ function putCityById(req, res) {
             if (!cityQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`City with id "${id}" not found`, City_1.default));
             }
+            if (!isActive) {
+                const [busRouteIds, placeIds] = yield Promise.all([
+                    Bus_Route_1.default.find({ cityId: id }).select('_id'),
+                    Place_1.default.find({ cityId: id }).select('_id'),
+                ]);
+                yield Promise.all([
+                    Bus_Route_1.default.updateMany({ cityId: id }, { isActive: false }),
+                    Place_1.default.updateMany({ cityId: id }, { isActive: false }),
+                    Route_Stop_1.default.updateMany({
+                        $or: [
+                            { busRouteId: { $in: busRouteIds.map((busRoute) => busRoute._id) } },
+                            { placeId: { $in: placeIds.map((place) => place._id) } },
+                        ],
+                    }, { $set: { isActive: false } }),
+                ]);
+            }
             res.status(http_status_codes_1.StatusCodes.OK).send(Object.assign({}, cityQuery.toObject()));
         }
         catch (err) {
@@ -101,8 +117,8 @@ function deleteCityById(req, res) {
                 Place_1.default.updateMany({ cityId: id }, { isActive: false }),
                 Route_Stop_1.default.updateMany({
                     $or: [
-                        { busRouteId: { $in: [...busRouteIds.map((busRoute) => busRoute._id)] } },
-                        { placeId: { $in: [...placeIds.map((place) => place._id)] } },
+                        { busRouteId: { $in: busRouteIds.map((busRoute) => busRoute._id) } },
+                        { placeId: { $in: placeIds.map((place) => place._id) } },
                     ],
                 }, { $set: { isActive: false } }),
             ]);

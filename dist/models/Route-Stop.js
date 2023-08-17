@@ -39,12 +39,16 @@ const routeStopSchema = new mongoose_1.Schema({
     },
 });
 // add model pre hook to check if routeId and placeId are valid
+// also check if routeId.cityId === placeId.cityId
 routeStopSchema.pre('save', function (next) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
             const [busRoute, place] = yield Promise.all([Bus_Route_1.default.findById(this.routeId), Place_1.default.findById(this.placeId)]);
             if (!busRoute || !place) {
-                throw new errors_1.InvalidDocumentIdError('Invalid routeId or placeId');
+                throw new errors_1.InvalidIdError('Invalid routeId or placeId');
+            }
+            if (busRoute.cityId.toString() !== place.cityId.toString()) {
+                throw new errors_1.InvalidIdError('BusRoute and Place cityId conflict');
             }
             next();
         }

@@ -48,7 +48,7 @@ function postRouteStop(req, res) {
             res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, routeStopQuery.toObject()));
         }
         catch (err) {
-            if (err instanceof errors_1.InvalidDocumentIdError) {
+            if (err instanceof errors_1.InvalidIdError) {
                 return res.status(err.statusCode).send((0, generic_error_object_1.default)(`${err.message}`, Route_Stop_1.default));
             }
             res.status(http_status_codes_1.StatusCodes.INTERNAL_SERVER_ERROR).send((0, generic_error_object_1.default)('Internal server error', Route_Stop_1.default));

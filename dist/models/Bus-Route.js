@@ -10,7 +10,6 @@ const routeSchema = new mongoose_1.Schema({
     name: {
         type: String,
         required: true,
-        unique: true,
     },
     isActive: {
         type: Boolean,

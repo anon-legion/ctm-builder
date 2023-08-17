@@ -1,7 +1,7 @@
 import { StatusCodes } from 'http-status-codes';
 import CustomApiError from './custom-api';
 
-class InvalidDocumentIdError extends CustomApiError {
+class InvalidIdError extends CustomApiError {
   statusCode: StatusCodes;
   constructor(message: string) {
     super(message);
@@ -9,4 +9,4 @@ class InvalidDocumentIdError extends CustomApiError {
   }
 }
 
-export default InvalidDocumentIdError;
+export default InvalidIdError;

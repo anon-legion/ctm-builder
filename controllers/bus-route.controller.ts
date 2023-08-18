@@ -6,7 +6,9 @@ import errorObject from './utils/generic-error-object';
 
 async function getBusRoutesAll(_: Request, res: Response) {
   try {
-    const busRouteQuery = await BusRoute.find({ isActive: true }, ['-__v']).sort({ name: 1 });
+    const busRouteQuery = await BusRoute.find({ isActive: true }, ['-__v'])
+      .sort({ name: 1 })
+      .populate('cityId', 'name');
     res.status(StatusCodes.OK).send([...busRouteQuery]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send([]);
@@ -17,7 +19,7 @@ async function postBusRoute(req: Request, res: Response) {
   const { cityId, name, isActive } = req.body;
 
   try {
-    const busRouteQuery = await BusRoute.create({ cityId, name, isActive });
+    const busRouteQuery = await (await BusRoute.create({ cityId, name, isActive })).populate('cityId', 'name');
     res.status(StatusCodes.CREATED).send({ ...busRouteQuery.toObject() });
   } catch (err: any) {
     if (err.code === 11000) {
@@ -48,7 +50,9 @@ async function getBusRoutesByCityId(req: Request, res: Response) {
   const { id: cityId } = req.params;
 
   try {
-    const busRouteQuery = await BusRoute.find({ cityId, isActive: true }, ['-__v']).sort({ name: 1 });
+    const busRouteQuery = await BusRoute.find({ cityId, isActive: true }, ['-__v'])
+      .sort({ name: 1 })
+      .populate('cityId', 'name');
     res.status(StatusCodes.OK).send([...busRouteQuery]);
   } catch (err) {
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send([]);
@@ -60,9 +64,9 @@ async function putBusRouteById(req: Request, res: Response) {
   const { cityId, name, isActive } = req.body;
 
   try {
-    const busRouteQuery = await BusRoute.findByIdAndUpdate(id, { cityId, name, isActive }, { new: true }).select(
-      '-__v'
-    );
+    const busRouteQuery = await BusRoute.findByIdAndUpdate(id, { cityId, name, isActive }, { new: true })
+      .populate('cityId', 'name')
+      .select('-__v');
 
     if (!busRouteQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`Bus route with id "${id} not found`, BusRoute));

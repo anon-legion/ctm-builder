@@ -50,7 +50,7 @@ async function putCityById(req: Request, res: Response) {
   const { name, isActive } = req.body;
 
   try {
-    const cityQuery = await City.findByIdAndUpdate(id, { name, isActive }, { new: true }).select('__v');
+    const cityQuery = await City.findByIdAndUpdate(id, { name, isActive }, { new: true }).select('-__v');
 
     if (!cityQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`City with id "${id}" not found`, City));

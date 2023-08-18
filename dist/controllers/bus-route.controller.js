@@ -20,7 +20,9 @@ const generic_error_object_1 = __importDefault(require("./utils/generic-error-ob
 function getBusRoutesAll(_, res) {
     return __awaiter(this, void 0, void 0, function* () {
         try {
-            const busRouteQuery = yield Bus_Route_1.default.find({ isActive: true }, ['-__v']).sort({ name: 1 });
+            const busRouteQuery = yield Bus_Route_1.default.find({ isActive: true }, ['-__v'])
+                .sort({ name: 1 })
+                .populate('cityId', 'name');
             res.status(http_status_codes_1.StatusCodes.OK).send([...busRouteQuery]);
         }
         catch (err) {
@@ -33,7 +35,7 @@ function postBusRoute(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { cityId, name, isActive } = req.body;
         try {
-            const busRouteQuery = yield Bus_Route_1.default.create({ cityId, name, isActive });
+            const busRouteQuery = yield (yield Bus_Route_1.default.create({ cityId, name, isActive })).populate('cityId', 'name');
             res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, busRouteQuery.toObject()));
         }
         catch (err) {
@@ -65,7 +67,9 @@ function getBusRoutesByCityId(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id: cityId } = req.params;
         try {
-            const busRouteQuery = yield Bus_Route_1.default.find({ cityId, isActive: true }, ['-__v']).sort({ name: 1 });
+            const busRouteQuery = yield Bus_Route_1.default.find({ cityId, isActive: true }, ['-__v'])
+                .sort({ name: 1 })
+                .populate('cityId', 'name');
             res.status(http_status_codes_1.StatusCodes.OK).send([...busRouteQuery]);
         }
         catch (err) {
@@ -79,7 +83,9 @@ function putBusRouteById(req, res) {
         const { id } = req.params;
         const { cityId, name, isActive } = req.body;
         try {
-            const busRouteQuery = yield Bus_Route_1.default.findByIdAndUpdate(id, { cityId, name, isActive }, { new: true }).select('-__v');
+            const busRouteQuery = yield Bus_Route_1.default.findByIdAndUpdate(id, { cityId, name, isActive }, { new: true })
+                .populate('cityId', 'name')
+                .select('-__v');
             if (!busRouteQuery) {
                 return res.status(http_status_codes_1.StatusCodes.NOT_FOUND).send((0, generic_error_object_1.default)(`Bus route with id "${id} not found`, Bus_Route_1.default));
             }

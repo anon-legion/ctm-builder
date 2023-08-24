@@ -21,6 +21,9 @@ router.route('/')
   .post(
     baseStrValidation('name').isLength({ min: 3, max: 50 }).escape(),
     body('isActive').isBoolean({strict: true}),
+    body('isSymmetric').isBoolean({strict: true}),
+    body('hasPath').isBoolean({strict: true}),
+    body('weight').isNumeric().optional({ nullable: true }),
     payloadToTitleCase(),
     expressValidatorHandler,
     postBusRoute
@@ -30,8 +33,11 @@ router.route('/')
 // prettier-ignore
 router.route('/:id')
   .put(
-    baseStrValidation('name').isLength({ min: 4, max: 50 }).escape(),
+    baseStrValidation('name').isLength({ min: 3, max: 50 }).escape(),
     body('isActive').isBoolean({strict: true}),
+    body('isSymmetric').isBoolean({strict: true}),
+    body('hasPath').isBoolean({strict: true}),
+    body('weight').isNumeric().optional(),
     payloadToTitleCase(),
     expressValidatorHandler,
     putBusRouteById

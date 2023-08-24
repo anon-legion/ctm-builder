@@ -15,11 +15,11 @@ const route_stop_controller_1 = require("../controllers/route-stop.controller");
 const router = express_1.default.Router();
 // prettier-ignore
 router.route('/')
-    .post((0, base_validation_chain_1.default)('name').isLength({ min: 3, max: 50 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, normalize_str_payload_1.default)(), express_validator_handler_1.default, bus_route_controller_1.postBusRoute)
+    .post((0, base_validation_chain_1.default)('name').isLength({ min: 3, max: 50 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, express_validator_1.body)('isSymmetric').isBoolean({ strict: true }), (0, express_validator_1.body)('hasPath').isBoolean({ strict: true }), (0, express_validator_1.body)('weight').isNumeric().optional({ nullable: true }), (0, normalize_str_payload_1.default)(), express_validator_handler_1.default, bus_route_controller_1.postBusRoute)
     .get(bus_route_controller_1.getBusRoutesAll);
 // prettier-ignore
 router.route('/:id')
-    .put((0, base_validation_chain_1.default)('name').isLength({ min: 4, max: 50 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, normalize_str_payload_1.default)(), express_validator_handler_1.default, bus_route_controller_1.putBusRouteById)
+    .put((0, base_validation_chain_1.default)('name').isLength({ min: 3, max: 50 }).escape(), (0, express_validator_1.body)('isActive').isBoolean({ strict: true }), (0, express_validator_1.body)('isSymmetric').isBoolean({ strict: true }), (0, express_validator_1.body)('hasPath').isBoolean({ strict: true }), (0, express_validator_1.body)('weight').isNumeric().optional(), (0, normalize_str_payload_1.default)(), express_validator_handler_1.default, bus_route_controller_1.putBusRouteById)
     .get(bus_route_controller_1.getBusRouteById)
     .delete(bus_route_controller_1.deleteBusRouteById);
 // prettier-ignore

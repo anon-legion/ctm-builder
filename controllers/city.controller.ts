@@ -16,15 +16,16 @@ async function getCitiesAll(_: Request, res: Response) {
 }
 
 async function postCity(req: Request, res: Response) {
-  const { name, isActive } = req.body;
+  const { name, isActive, code, center, zoom } = req.body;
 
   try {
-    const cityQuery = await City.create({ name, isActive });
+    const cityQuery = await City.create({ name, isActive, code, center, zoom });
     res.status(StatusCodes.CREATED).send({ ...cityQuery.toObject() });
   } catch (err: any) {
     if (err.code === 11000) {
       return res.status(StatusCodes.CONFLICT).send(errorObject('Resource already exists', City));
     }
+    console.log(err);
     res.status(StatusCodes.INTERNAL_SERVER_ERROR).send(errorObject('Internal server error', City));
   }
 }
@@ -47,10 +48,12 @@ async function getCityById(req: Request, res: Response) {
 
 async function putCityById(req: Request, res: Response) {
   const { id } = req.params;
-  const { name, isActive } = req.body;
+  const { name, isActive, code, center, zoom } = req.body;
 
   try {
-    const cityQuery = await City.findByIdAndUpdate(id, { name, isActive }, { new: true }).select('-__v');
+    const cityQuery = await City.findByIdAndUpdate(id, { name, isActive, code, center, zoom }, { new: true }).select(
+      '-__v'
+    );
 
     if (!cityQuery) {
       return res.status(StatusCodes.NOT_FOUND).send(errorObject(`City with id "${id}" not found`, City));

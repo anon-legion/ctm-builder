@@ -16,6 +16,9 @@ router.route('/')
   .post(
     baseStrValidation('name').isLength({ min: 4, max: 50 }).escape(),
     body('isActive').isBoolean({strict: true}),
+    baseStrValidation('code').isLength({ min: 3}).escape(),
+    body('center').isArray({ min: 2, max: 2 }).optional({ nullable: true }),
+    body('zoom').isNumeric().optional({ nullable: true }),
     payloadToTitleCase(),
     expressValidatorHandler,
     postCity,
@@ -28,6 +31,9 @@ router.route('/:id')
   .put(
     baseStrValidation('name').isLength({ min: 4, max: 50 }).escape(),
     body('isActive').isBoolean({strict: true}),
+    baseStrValidation('code').isLength({ min: 3}).escape(),
+    body('center').isArray({ min: 2, max: 2 }).optional({ nullable: true }),
+    body('zoom').isNumeric().optional({ nullable: true }),
     payloadToTitleCase(),
     expressValidatorHandler,
     putCityById

@@ -31,10 +31,15 @@ function getPlacesAll(_, res) {
 exports.getPlacesAll = getPlacesAll;
 function postPlace(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { cityId, name, aliases, isActive } = req.body;
+        const { cityId, name, aliases, isActive, type, coords } = req.body;
         try {
-            const newPlace = yield (yield Place_1.default.create({ cityId, name, aliases, isActive })).populate('cityId', 'name');
-            res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, newPlace.toObject()));
+            const newPlace = yield Place_1.default.create({ cityId, name, aliases, isActive, type, coords });
+            const { _id } = newPlace;
+            const placeQuery = yield Place_1.default.findById(_id).select('-__v').populate('cityId', 'name');
+            if (!placeQuery) {
+                return res.status(http_status_codes_1.StatusCodes.BAD_REQUEST).send((0, generic_error_object_1.default)('Something went wrong, try again later', Place_1.default));
+            }
+            res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, placeQuery.toObject()));
         }
         catch (err) {
             if (err.code === 11000) {
@@ -64,9 +69,9 @@ exports.getPlaceById = getPlaceById;
 function putPlaceById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
-        const { cityId, name, aliases, isActive } = req.body;
+        const { cityId, name, aliases, isActive, type, coords } = req.body;
         try {
-            const placeQuery = yield Place_1.default.findByIdAndUpdate(id, { cityId, name, aliases, isActive }, { new: true })
+            const placeQuery = yield Place_1.default.findByIdAndUpdate(id, { cityId, name, aliases, isActive, type, coords }, { new: true })
                 .populate('cityId', 'name')
                 .select('-__v');
             if (!placeQuery) {

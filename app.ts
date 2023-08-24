@@ -5,6 +5,7 @@ import helmet from 'helmet';
 import cors from 'cors';
 // import modules
 import mongoose from 'mongoose';
+import path from 'path';
 import cityRouter from './routes/city.route';
 import busRouteRouter from './routes/bus-route.route';
 import placeRouter from './routes/place.route';
@@ -28,6 +29,12 @@ app.use('/api/v1/places', placeRouter);
 app.use('/api/v1/route-stops', routeStopRouter);
 app.use('/api/v1/test_endpoint', (_, res: Response) => {
   res.status(200).send('Express + Typescript Server');
+});
+
+// serve index.html if url doesn't match any route
+app.use(express.static(path.join(__dirname, '/client')));
+app.get('*', (_, res: Response) => {
+  res.sendFile(path.join(__dirname, '/client/index.html'));
 });
 
 // 404 and error handler middleware to catch request errors

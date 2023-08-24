@@ -11,6 +11,20 @@ const citySchema = new mongoose_1.Schema({
         required: true,
         default: true,
     },
+    code: {
+        type: String,
+        required: true,
+    },
+    center: {
+        type: [Number, Number],
+        required: false,
+        default: null,
+    },
+    zoom: {
+        type: Number,
+        required: false,
+        default: null,
+    },
 });
 citySchema.post('save', function (error, _doc, next) {
     if (error.name === 'MongoError' && error.message.includes('11000')) {

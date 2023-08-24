@@ -16,6 +16,21 @@ const routeSchema = new mongoose_1.Schema({
         required: true,
         default: true,
     },
+    isSymmetric: {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
+    hasPath: {
+        type: Boolean,
+        required: false,
+        default: false,
+    },
+    weight: {
+        type: Number,
+        required: false,
+        default: 0,
+    },
 });
 routeSchema.post('save', function (error, _doc, next) {
     if (error.name === 'MongoError' && error.message.includes('11000')) {

@@ -16,10 +16,17 @@ async function getBusRoutesAll(_: Request, res: Response) {
 }
 
 async function postBusRoute(req: Request, res: Response) {
-  const { cityId, name, isActive } = req.body;
+  const { cityId, name, isActive, isSymmetric, hasPath, weight } = req.body;
 
   try {
-    const busRouteQuery = await (await BusRoute.create({ cityId, name, isActive })).populate('cityId', 'name');
+    const newBusRoute = await BusRoute.create({ cityId, name, isActive, isSymmetric, hasPath, weight });
+    const { _id } = newBusRoute;
+    const busRouteQuery = await BusRoute.findById(_id).select('-__v').populate('cityId', 'name');
+
+    if (!busRouteQuery) {
+      return res.status(StatusCodes.BAD_REQUEST).send(errorObject('Something went wrong, try again later', BusRoute));
+    }
+
     res.status(StatusCodes.CREATED).send({ ...busRouteQuery.toObject() });
   } catch (err: any) {
     if (err.code === 11000) {
@@ -61,10 +68,14 @@ async function getBusRoutesByCityId(req: Request, res: Response) {
 
 async function putBusRouteById(req: Request, res: Response) {
   const { id } = req.params;
-  const { cityId, name, isActive } = req.body;
+  const { cityId, name, isActive, isSymmetric, hasPath, weight } = req.body;
 
   try {
-    const busRouteQuery = await BusRoute.findByIdAndUpdate(id, { cityId, name, isActive }, { new: true })
+    const busRouteQuery = await BusRoute.findByIdAndUpdate(
+      id,
+      { cityId, name, isActive, isSymmetric, hasPath, weight },
+      { new: true }
+    )
       .populate('cityId', 'name')
       .select('-__v');
 

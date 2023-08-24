@@ -21,6 +21,16 @@ const placeSchema = new Schema<IPlace>({
     required: false,
     default: true,
   },
+  type: {
+    type: String,
+    required: false,
+    default: null,
+  },
+  coords: {
+    type: [Number, Number],
+    required: false,
+    default: null,
+  },
 });
 
 placeSchema.post('save', function (error: MongooseError, _doc: Document, next: (err?: MongooseError) => void) {

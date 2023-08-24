@@ -16,6 +16,21 @@ const routeSchema = new Schema<IRoute>({
     required: true,
     default: true,
   },
+  isSymmetric: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  hasPath: {
+    type: Boolean,
+    required: false,
+    default: false,
+  },
+  weight: {
+    type: Number,
+    required: false,
+    default: 0,
+  },
 });
 
 routeSchema.post('save', function (error: MongooseError, _doc: Document, next: (err?: MongooseError) => void) {

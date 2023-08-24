@@ -21,6 +21,16 @@ const placeSchema = new mongoose_1.Schema({
         required: false,
         default: true,
     },
+    type: {
+        type: String,
+        required: false,
+        default: null,
+    },
+    coords: {
+        type: [Number, Number],
+        required: false,
+        default: null,
+    },
 });
 placeSchema.post('save', function (error, _doc, next) {
     if (error.name === 'MongoError' && error.message.includes('11000')) {

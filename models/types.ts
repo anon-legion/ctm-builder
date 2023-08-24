@@ -1,17 +1,29 @@
 import { Types } from 'mongoose';
 
-export interface ICity {
+interface IBase {
   _id: Types.ObjectId;
   name: string;
   isActive: boolean;
 }
 
-export interface IRoute extends ICity {
-  cityId: Types.ObjectId;
+export interface ICity extends IBase {
+  code: string;
+  center?: [number, number] | null;
+  zoom?: number | null;
 }
 
-export interface IPlace extends IRoute {
+export interface IRoute extends IBase {
+  cityId: ICity['_id'];
+  weight?: number;
+  isSymmetric?: boolean;
+  hasPath?: boolean;
+}
+
+export interface IPlace extends IBase {
+  cityId: ICity['_id'];
   aliases: string[];
+  type?: string | null;
+  coords?: [number, number] | null;
 }
 
 export interface IRouteStop {

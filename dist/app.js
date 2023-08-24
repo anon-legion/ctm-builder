@@ -20,6 +20,7 @@ const helmet_1 = __importDefault(require("helmet"));
 const cors_1 = __importDefault(require("cors"));
 // import modules
 const mongoose_1 = __importDefault(require("mongoose"));
+const path_1 = __importDefault(require("path"));
 const city_route_1 = __importDefault(require("./routes/city.route"));
 const bus_route_route_1 = __importDefault(require("./routes/bus-route.route"));
 const place_route_1 = __importDefault(require("./routes/place.route"));
@@ -40,6 +41,11 @@ app.use('/api/v1/places', place_route_1.default);
 app.use('/api/v1/route-stops', route_stop_route_1.default);
 app.use('/api/v1/test_endpoint', (_, res) => {
     res.status(200).send('Express + Typescript Server');
+});
+// serve index.html if url doesn't match any route
+app.use(express_1.default.static(path_1.default.join(__dirname, '/client')));
+app.get('*', (_, res) => {
+    res.sendFile(path_1.default.join(__dirname, '/client/index.html'));
 });
 // 404 and error handler middleware to catch request errors
 app.use(not_found_1.default);

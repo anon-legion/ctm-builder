@@ -11,6 +11,20 @@ const citySchema = new Schema<ICity>({
     required: true,
     default: true,
   },
+  code: {
+    type: String,
+    required: true,
+  },
+  center: {
+    type: [Number, Number],
+    required: false,
+    default: null,
+  },
+  zoom: {
+    type: Number,
+    required: false,
+    default: null,
+  },
 });
 
 citySchema.post('save', function (error: MongooseError, _doc: Document, next: (err?: MongooseError) => void) {

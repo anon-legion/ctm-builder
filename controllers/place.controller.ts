@@ -14,11 +14,18 @@ async function getPlacesAll(_: Request, res: Response) {
 }
 
 async function postPlace(req: Request, res: Response) {
-  const { cityId, name, aliases, isActive } = req.body;
+  const { cityId, name, aliases, isActive, type, coords } = req.body;
 
   try {
-    const newPlace = await (await Place.create({ cityId, name, aliases, isActive })).populate('cityId', 'name');
-    res.status(StatusCodes.CREATED).send({ ...newPlace.toObject() });
+    const newPlace = await Place.create({ cityId, name, aliases, isActive, type, coords });
+    const { _id } = newPlace;
+    const placeQuery = await Place.findById(_id).select('-__v').populate('cityId', 'name');
+
+    if (!placeQuery) {
+      return res.status(StatusCodes.BAD_REQUEST).send(errorObject('Something went wrong, try again later', Place));
+    }
+
+    res.status(StatusCodes.CREATED).send({ ...placeQuery.toObject() });
   } catch (err: any) {
     if (err.code === 11000) {
       return res.status(StatusCodes.CONFLICT).send(errorObject('Resource already exists', Place));
@@ -46,10 +53,14 @@ async function getPlaceById(req: Request, res: Response) {
 
 async function putPlaceById(req: Request, res: Response) {
   const { id } = req.params;
-  const { cityId, name, aliases, isActive } = req.body;
+  const { cityId, name, aliases, isActive, type, coords } = req.body;
 
   try {
-    const placeQuery = await Place.findByIdAndUpdate(id, { cityId, name, aliases, isActive }, { new: true })
+    const placeQuery = await Place.findByIdAndUpdate(
+      id,
+      { cityId, name, aliases, isActive, type, coords },
+      { new: true }
+    )
       .populate('cityId', 'name')
       .select('-__v');
 

@@ -33,9 +33,14 @@ function getBusRoutesAll(_, res) {
 exports.getBusRoutesAll = getBusRoutesAll;
 function postBusRoute(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
-        const { cityId, name, isActive } = req.body;
+        const { cityId, name, isActive, isSymmetric, hasPath, weight } = req.body;
         try {
-            const busRouteQuery = yield (yield Bus_Route_1.default.create({ cityId, name, isActive })).populate('cityId', 'name');
+            const newBusRoute = yield Bus_Route_1.default.create({ cityId, name, isActive, isSymmetric, hasPath, weight });
+            const { _id } = newBusRoute;
+            const busRouteQuery = yield Bus_Route_1.default.findById(_id).select('-__v').populate('cityId', 'name');
+            if (!busRouteQuery) {
+                return res.status(http_status_codes_1.StatusCodes.BAD_REQUEST).send((0, generic_error_object_1.default)('Something went wrong, try again later', Bus_Route_1.default));
+            }
             res.status(http_status_codes_1.StatusCodes.CREATED).send(Object.assign({}, busRouteQuery.toObject()));
         }
         catch (err) {
@@ -81,9 +86,9 @@ exports.getBusRoutesByCityId = getBusRoutesByCityId;
 function putBusRouteById(req, res) {
     return __awaiter(this, void 0, void 0, function* () {
         const { id } = req.params;
-        const { cityId, name, isActive } = req.body;
+        const { cityId, name, isActive, isSymmetric, hasPath, weight } = req.body;
         try {
-            const busRouteQuery = yield Bus_Route_1.default.findByIdAndUpdate(id, { cityId, name, isActive }, { new: true })
+            const busRouteQuery = yield Bus_Route_1.default.findByIdAndUpdate(id, { cityId, name, isActive, isSymmetric, hasPath, weight }, { new: true })
                 .populate('cityId', 'name')
                 .select('-__v');
             if (!busRouteQuery) {
